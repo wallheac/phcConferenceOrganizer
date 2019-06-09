@@ -1,19 +1,19 @@
 package com.jph.organizer.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
-@Entity
+@Entity(name="Panel")
+@Table(name="panel")
 public class PanelDomain {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue
+    private int panelId;
+
     private String panelName;
     private Integer contact;
-    private Enum<TypeDomain> type;
+    private String type;
     private Boolean accepted;
     private Date dateTime;
     private String location;
@@ -24,7 +24,19 @@ public class PanelDomain {
     private String requestor;
     private Date avRequestDate;
 
-    public PanelDomain(String panelName, Integer contact, Enum<TypeDomain> type, Boolean accepted, Date dateTime, String location, String cvUrl, String abstractUrl, String notes, Boolean avRequested, String requestor, Date avRequestDate) {
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name="panel_participant",
+        joinColumns=@JoinColumn(name="panel_id"),
+        inverseJoinColumns = @JoinColumn(name="participant_id")
+    )
+    private List<ParticipantDomain> participants;
+
+    public PanelDomain(String panelName, Integer contact, String type, Boolean accepted, Date dateTime,
+                       String location, String cvUrl, String abstractUrl, String notes, Boolean avRequested,
+                       String requestor, Date avRequestDate, ParticipantDomain... participants) {
         this.panelName = panelName;
         this.contact = contact;
         this.type = type;
@@ -39,12 +51,22 @@ public class PanelDomain {
         this.avRequestDate = avRequestDate;
     }
 
-    public Integer getId() {
-        return id;
+    public void addParticipant(ParticipantDomain participantDomain) {
+        participants.add(participantDomain);
+        participantDomain.getPanels().add(this);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void removeParticipant(ParticipantDomain participantDomain) {
+        participants.remove(participantDomain);
+        participantDomain.getPanels().remove(this);
+    }
+
+    public int getPanelId() {
+        return panelId;
+    }
+
+    public void setPanelId(int panelId) {
+        this.panelId = panelId;
     }
 
     public String getPanelName() {
@@ -63,11 +85,11 @@ public class PanelDomain {
         this.contact = contact;
     }
 
-    public Enum<TypeDomain> getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Enum<TypeDomain> type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -141,5 +163,13 @@ public class PanelDomain {
 
     public void setAvRequestDate(Date avRequestDate) {
         this.avRequestDate = avRequestDate;
+    }
+
+    public List<ParticipantDomain> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<ParticipantDomain> participants) {
+        this.participants = participants;
     }
 }

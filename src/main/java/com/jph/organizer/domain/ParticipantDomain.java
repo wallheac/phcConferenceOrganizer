@@ -1,15 +1,14 @@
 package com.jph.organizer.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
-@Entity
+@Entity(name="Participant")
+@Table(name="participant")
 public class ParticipantDomain {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue
+    private Integer participantId;
     private String firstName;
     private String lastName;
     private String status;
@@ -18,7 +17,10 @@ public class ParticipantDomain {
     private String cvUrl;
     private String notes;
 
-    public ParticipantDomain(String firstName, String lastName, String status, String institution, String email, String cv, String notes) {
+    @ManyToMany(mappedBy="participants")
+    private List<PanelDomain> panels;
+
+    public ParticipantDomain(String firstName, String lastName, String status, String institution, String email, String cvUrl, String notes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
@@ -28,12 +30,20 @@ public class ParticipantDomain {
         this.notes = notes;
     }
 
-    public Integer getId() {
-        return id;
+    public List<PanelDomain> getPanels() {
+        return panels;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPanels(List<PanelDomain> panels) {
+        this.panels = panels;
+    }
+
+    public Integer getParticipantId() {
+        return participantId;
+    }
+
+    public void setParticipantId(Integer participantId) {
+        this.participantId = participantId;
     }
 
     public String getFirstName() {
