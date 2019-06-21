@@ -34,6 +34,9 @@ public class PanelDomain {
     )
     private List<ParticipantDomain> participants;
 
+    public PanelDomain() {
+    }
+
     public PanelDomain(String panelName, Integer contact, String type, Boolean accepted, Date dateTime,
                        String location, String cvUrl, String abstractUrl, String notes, Boolean avRequested,
                        String requestor, Date avRequestDate, ParticipantDomain... participants) {

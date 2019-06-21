@@ -1,6 +1,8 @@
 package com.jph.organizer.repository;
-import com.jph.organizer.domain.PanelDomain;
-import org.springframework.data.repository.CrudRepository;
 
-public interface PanelRepository extends CrudRepository<PanelDomain, Integer> {
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PanelRepository extends CrudRepository<String, Integer> {
 }

@@ -1,11 +1,9 @@
 package com.jph.organizer.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
+@Entity(name="Paper")
+@Table(name="paper")
 public class PaperDomain {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -15,6 +13,9 @@ public class PaperDomain {
     private String abstractUrl;
     private Integer panelId;
     private Boolean accepted;
+
+    public PaperDomain() {
+    }
 
     public PaperDomain(Integer participantId, String title, String abstractUrl, Integer panelId, Boolean accepted) {
         this.participantId = participantId;

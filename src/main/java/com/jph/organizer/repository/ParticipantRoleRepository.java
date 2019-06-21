@@ -1,7 +1,8 @@
 package com.jph.organizer.repository;
 
-import com.jph.organizer.domain.ParticipantRoleDomain;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ParticipantRoleRepository extends CrudRepository<ParticipantRoleDomain, Integer> {
+@Repository
+public interface ParticipantRoleRepository extends CrudRepository<String, Integer> {
 }

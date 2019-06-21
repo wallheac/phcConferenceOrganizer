@@ -1,7 +1,8 @@
 package com.jph.organizer.repository;
-import com.jph.organizer.domain.PaperDomain;
+
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PaperRepository extends CrudRepository<PaperDomain, Integer>{
-
+@Repository
+public interface PaperRepository extends CrudRepository<String, Integer> {
 }

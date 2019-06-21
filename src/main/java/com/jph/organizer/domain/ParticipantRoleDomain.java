@@ -1,11 +1,9 @@
 package com.jph.organizer.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
+@Entity(name="ParticipantRole")
+@Table(name="participant_role")
 public class ParticipantRoleDomain {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -13,6 +11,9 @@ public class ParticipantRoleDomain {
     private Integer participantId;
     private Integer panelId;
     private Enum<PanelPositionDomain> panelPosition;
+
+    public ParticipantRoleDomain() {
+    }
 
     public ParticipantRoleDomain(Integer participantId, Integer panelId, Enum<PanelPositionDomain> panelPosition) {
         this.participantId = participantId;

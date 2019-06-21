@@ -20,6 +20,9 @@ public class ParticipantDomain {
     @ManyToMany(mappedBy="participants")
     private List<PanelDomain> panels;
 
+    public ParticipantDomain() {
+    }
+
     public ParticipantDomain(String firstName, String lastName, String status, String institution, String email, String cvUrl, String notes) {
         this.firstName = firstName;
         this.lastName = lastName;

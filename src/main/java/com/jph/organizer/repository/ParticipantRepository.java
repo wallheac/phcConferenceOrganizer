@@ -1,8 +1,8 @@
 package com.jph.organizer.repository;
 
-import com.jph.organizer.domain.ParticipantDomain;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ParticipantRepository extends CrudRepository<ParticipantDomain, Integer> {
-
+@Repository
+public interface ParticipantRepository extends CrudRepository<String, Integer> {
 }
