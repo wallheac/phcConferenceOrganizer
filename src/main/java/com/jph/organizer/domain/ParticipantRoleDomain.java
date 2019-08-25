@@ -10,12 +10,12 @@ public class ParticipantRoleDomain {
     private Integer id;
     private Integer participantId;
     private Integer panelId;
-    private Enum<PanelPositionDomain> panelPosition;
+    private String panelPosition;
 
     public ParticipantRoleDomain() {
     }
 
-    public ParticipantRoleDomain(Integer participantId, Integer panelId, Enum<PanelPositionDomain> panelPosition) {
+    public ParticipantRoleDomain(Integer participantId, Integer panelId, String panelPosition) {
         this.participantId = participantId;
         this.panelId = panelId;
         this.panelPosition = panelPosition;
@@ -45,11 +45,11 @@ public class ParticipantRoleDomain {
         this.panelId = panelId;
     }
 
-    public Enum<PanelPositionDomain> getPanelPosition() {
+    public String getPanelPosition() {
         return panelPosition;
     }
 
-    public void setPanelPosition(Enum<PanelPositionDomain> panelPosition) {
+    public void setPanelPosition(String panelPosition) {
         this.panelPosition = panelPosition;
     }
 }

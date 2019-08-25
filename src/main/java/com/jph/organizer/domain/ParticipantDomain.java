@@ -1,6 +1,7 @@
 package com.jph.organizer.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name="Participant")
@@ -8,17 +9,28 @@ import java.util.List;
 public class ParticipantDomain {
     @Id
     @GeneratedValue
+    @Column(name="participant_id")
     private Integer participantId;
+
+    @Column(name="first_name")
     private String firstName;
+
+    @Column(name="last_name")
     private String lastName;
+
     private String status;
+
     private String institution;
+
     private String email;
+
+    @Column(name="cv_url")
     private String cvUrl;
+
     private String notes;
 
     @ManyToMany(mappedBy="participants")
-    private List<PanelDomain> panels;
+    private List<PanelDomain> panels = new ArrayList<>();
 
     public ParticipantDomain() {
     }

@@ -1,6 +1,7 @@
 package com.jph.organizer.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,35 +10,53 @@ import java.util.List;
 public class PanelDomain {
     @Id
     @GeneratedValue
+    @Column(name="panel_id")
     private int panelId;
 
+    @Column(name="panel_name")
     private String panelName;
-    private Integer contact;
+
+    @OneToOne
+    private ParticipantDomain contact;
+
     private String type;
+
     private Boolean accepted;
+
+    @Column(name="date_time")
     private Date dateTime;
+
     private String location;
+
+    @Column(name="cv_url")
     private String cvUrl;
+
+    @Column(name="abstract_url")
     private String abstractUrl;
+
     private String notes;
+
+    @Column(name="av_requested")
     private Boolean avRequested;
+
     private String requestor;
+
+    @Column(name="av_request_date")
     private Date avRequestDate;
 
     @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
+            CascadeType.PERSIST
     })
     @JoinTable(name="panel_participant",
         joinColumns=@JoinColumn(name="panel_id"),
         inverseJoinColumns = @JoinColumn(name="participant_id")
     )
-    private List<ParticipantDomain> participants;
+    private List<ParticipantDomain> participants = new ArrayList<>();
 
     public PanelDomain() {
     }
 
-    public PanelDomain(String panelName, Integer contact, String type, Boolean accepted, Date dateTime,
+    public PanelDomain(String panelName, ParticipantDomain contact, String type, Boolean accepted, Date dateTime,
                        String location, String cvUrl, String abstractUrl, String notes, Boolean avRequested,
                        String requestor, Date avRequestDate, ParticipantDomain... participants) {
         this.panelName = panelName;
@@ -80,11 +99,11 @@ public class PanelDomain {
         this.panelName = panelName;
     }
 
-    public Integer getContact() {
+    public ParticipantDomain getContact() {
         return contact;
     }
 
-    public void setContact(Integer contact) {
+    public void setContact(ParticipantDomain contact) {
         this.contact = contact;
     }
 
