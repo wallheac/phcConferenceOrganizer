@@ -5,18 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 import java.util.Date;
 
 @Controller
-@RequestMapping(path="/panels")
+@RequestMapping
 public class PanelController {
     @Autowired
     private PanelSubmissionAccessor panelSubmissionAccessor;
 
+    @Autowired
+    private PanelSheetAccessor panelSheetAccessor;
+
     //TODO this is for testing. Will need to change
-    @GetMapping
+    @GetMapping ("/panels")
     public void savePanel() {
         ParticipantDomain participantDomain = new ParticipantDomain("Amy", "Wall", "Full Professor", "SLU",
                 "wallheac@gmail.com", "http://url.com", "these are notes");
@@ -32,5 +36,10 @@ public class PanelController {
 
         panelSubmissionAccessor.createPanel(panelDomain, Arrays.asList(paperDomain, paperDomain2), Arrays.asList(participantDomain, participantDomain2),
                 Arrays.asList(participantRoleDomain, participantRoleDomain2));
+    }
+
+    @GetMapping("/panels/init")
+    public void authTest() {
+        panelSheetAccessor.getSheet();
     }
 }
