@@ -1,6 +1,7 @@
 HELP.md
 mvnw*
 .mvn
+/OauthLandingPage/
 
 /target/
 !.mvn/wrapper/maven-wrapper.jar
