@@ -27,6 +27,9 @@ public class ParticipantDomain {
     @Column(name="cv_url")
     private String cvUrl;
 
+    @Column(name="abstract_url")
+    private String abstractUrl;
+
     private String notes;
 
     @ManyToMany(mappedBy="participants")
@@ -35,13 +38,15 @@ public class ParticipantDomain {
     public ParticipantDomain() {
     }
 
-    public ParticipantDomain(String firstName, String lastName, String status, String institution, String email, String cvUrl, String notes) {
+    public ParticipantDomain(String firstName, String lastName, String status, String institution, String email,
+                             String cvUrl, String abstractUrl, String notes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
         this.institution = institution;
         this.email = email;
         this.cvUrl = cvUrl;
+        this.abstractUrl = abstractUrl;
         this.notes = notes;
     }
 
@@ -107,6 +112,14 @@ public class ParticipantDomain {
 
     public void setCvUrl(String cvUrl) {
         this.cvUrl = cvUrl;
+    }
+
+    public String getAbstractUrl() {
+        return abstractUrl;
+    }
+
+    public void setAbstractUrl(String abstractUrl) {
+        this.abstractUrl = abstractUrl;
     }
 
     public String getNotes() {
