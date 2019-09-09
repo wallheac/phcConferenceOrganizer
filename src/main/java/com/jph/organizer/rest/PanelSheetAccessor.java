@@ -20,7 +20,7 @@ public class PanelSheetAccessor {
     private String PANEL_SHEET_2018_ID = "1Lt13KULBoodVg8FPnW8TYxbSuP8D3APwXKMzkW46MvQ";
     private Sheets sheets;
 
-    public void getSheet() {
+    public List<HashMap> getSheet() {
         sheets = authUtility.authorizeSheets();
         List<HashMap> panels = new ArrayList();
         try {
@@ -32,18 +32,16 @@ public class PanelSheetAccessor {
             if(values == null || values.isEmpty()) {
                 System.out.println("No Data");
             } else {
-                System.out.println("DATA!");
                 values.remove(0);
                 for (List row: values) {
                     panelSheetTransformer.fromPanel(panels, row);
                 }
             }
-            System.out.println("done");
         } catch (IOException e) {
             System.out.println("error retrieving range from sheet" + PANEL_SHEET_2018_ID);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(" all done");
+        return panels;
     }
 }

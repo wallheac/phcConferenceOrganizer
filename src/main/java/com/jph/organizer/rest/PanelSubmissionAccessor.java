@@ -1,20 +1,12 @@
 package com.jph.organizer.rest;
 
-import com.jph.organizer.domain.PanelDomain;
-import com.jph.organizer.domain.PaperDomain;
-import com.jph.organizer.domain.ParticipantDomain;
-import com.jph.organizer.domain.ParticipantRoleDomain;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import com.jph.organizer.domain.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -24,32 +16,42 @@ public class PanelSubmissionAccessor {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void createPanel(PanelDomain panelDomain, List<PaperDomain> paperDomains,
-                            List<ParticipantDomain> participantDomains,
-                            List<ParticipantRoleDomain> participantRoleDomains) {
+    public void createPanel(HashMap panel){
+        PanelDomain panelDomain = (PanelDomain) panel.get("panel");
 
         entityManager.persist(panelDomain);
 
-        for(int i = 0; i < participantDomains.size(); i++) {
-            panelDomain.addParticipant(participantDomains.get(i));
+        List panelists = (List) panel.get("panelists");
+        List papers = (List) panel.get("papers");
+        for (int i = 0; i < panelists.size(); i++) {
+            ParticipantDomain participantDomain = (ParticipantDomain) panelists.get(i);
+            PaperDomain paperDomain = (PaperDomain) papers.get(i);
 
-            entityManager.persist(participantDomains.get(i));
+            addParticipantToPanel(participantDomain, panelDomain);
 
-            ParticipantRoleDomain participantRole = participantRoleDomains.get(i);
-            participantRole.setPanelId(panelDomain.getPanelId());
-            participantRole.setParticipantId(participantDomains.get(i).getParticipantId());
-            participantRole.setPanelPosition(participantRoleDomains.get(i).getPanelPosition());
+            entityManager.persist(participantDomain);
+            entityManager.persist(createParticipantRoleDomain(participantDomain, panelDomain,
+                    PanelPositionDomain.PRESENTER));
 
-            entityManager.persist(participantRole);
+            paperDomain.setParticipantId(participantDomain.getParticipantId());
+            paperDomain.setPanelId(panelDomain.getPanelId());
+
+            entityManager.persist(paperDomain);
         }
-
-        for(int i = 0; i < paperDomains.size(); i++) {
-            paperDomains.get(i).setPanelId(panelDomain.getPanelId());
-            paperDomains.get(i).setParticipantId(participantDomains.get(i).getParticipantId());
-
-            entityManager.persist(paperDomains.get(i));
-        }
-
         entityManager.close();
+    }
+
+    private ParticipantRoleDomain createParticipantRoleDomain(ParticipantDomain participantDomain, PanelDomain panelDomain,
+                                                              PanelPositionDomain panelPositionDomain) {
+        ParticipantRoleDomain participantRoleDomain = new ParticipantRoleDomain();
+        participantRoleDomain.setParticipantId(participantDomain.getParticipantId());
+        participantRoleDomain.setPanelId(panelDomain.getPanelId());
+        participantRoleDomain.setPanelPosition(panelPositionDomain.toString());
+
+        return participantRoleDomain;
+    }
+
+    private void addParticipantToPanel(ParticipantDomain participantDomain, PanelDomain panelDomain) {
+        panelDomain.addParticipant(participantDomain);
     }
 }
