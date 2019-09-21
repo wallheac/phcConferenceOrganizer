@@ -3,7 +3,6 @@ package com.jph.organizer.rest;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.utils.GoogleAuthorizationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

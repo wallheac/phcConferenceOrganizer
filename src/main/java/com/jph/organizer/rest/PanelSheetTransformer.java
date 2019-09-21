@@ -6,28 +6,38 @@ import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.domain.ParticipantDomain;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class PanelSheetTransformer {
 
     public List<HashMap<String, Object>> fromPanels(List<List<Object>> sheetValues, List<File> driveFiles) {
         List<HashMap<String, Object>> panels = new ArrayList<>();
+        HashMap<String, String> docMap = mapDriveFiles(driveFiles);
         if (sheetValues == null || sheetValues.isEmpty()) {
             System.out.println("No Data");
         } else {
             sheetValues.remove(0);
             for (List row : sheetValues) {
-                fromPanel(panels, row);
+                fromPanel(panels, row, docMap);
             }
         }
         return panels;
     }
 
-    public List<HashMap<String, Object>> fromPanel(List<HashMap<String, Object>> panels, List row) {
+    private HashMap<String,String> mapDriveFiles(List<File> driveFiles) {
+        HashMap<String, String> docMap = new HashMap<>();
+        driveFiles.stream()
+                .forEach(file -> docMap.put(file.getName(), file.getId()));
+        return docMap;
+    }
+
+    public List<HashMap<String, Object>> fromPanel(List<HashMap<String, Object>> panels, List row, HashMap docMap) {
         HashMap<String, Object> panelMap = new HashMap();
         try {
-            panelMap.put("panel", mapPanelDomain(row));
+            panelMap.put("panel", mapPanelDomain(row, docMap));
             mapParticipantAndPaperDomains(row, panelMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,10 +46,12 @@ public class PanelSheetTransformer {
         return panels;
     }
 
-    private PanelDomain mapPanelDomain(List list) {
+    private PanelDomain mapPanelDomain(List list, HashMap docMap) {
         String notes = list.size() == 54 ? list.get(53).toString() : null;
+        String abstractUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1).toString());
+        String cvUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1).toString());
         return new PanelDomain(list.get(1).toString(), null, "SUBMITTED", false,
-                null, null, "http://cv.com", "http://panelAbstract.com", notes,
+                null, null, cvUrl, abstractUrl, notes,
                 false, null, null);
     }
 
