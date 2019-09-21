@@ -1,5 +1,6 @@
 package com.jph.organizer.rest;
 
+import com.google.api.services.drive.model.File;
 import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.domain.ParticipantDomain;
@@ -9,18 +10,30 @@ import java.util.*;
 
 @Component
 public class PanelSheetTransformer {
-    
-    public List<HashMap> fromPanel(List panels, List row) {
 
-        HashMap<String, Object> panelMap = new HashMap();
-            try {
-                panelMap.put("panel", mapPanelDomain(row));
-                mapParticipantAndPaperDomains(row, panelMap);
-            } catch (Exception e) {
-                e.printStackTrace();
+    public List<HashMap<String, Object>> fromPanels(List<List<Object>> sheetValues, List<File> driveFiles) {
+        List<HashMap<String, Object>> panels = new ArrayList<>();
+        if (sheetValues == null || sheetValues.isEmpty()) {
+            System.out.println("No Data");
+        } else {
+            sheetValues.remove(0);
+            for (List row : sheetValues) {
+                fromPanel(panels, row);
             }
+        }
+        return panels;
+    }
+
+    public List<HashMap<String, Object>> fromPanel(List<HashMap<String, Object>> panels, List row) {
+        HashMap<String, Object> panelMap = new HashMap();
+        try {
+            panelMap.put("panel", mapPanelDomain(row));
+            mapParticipantAndPaperDomains(row, panelMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         panels.add(panelMap);
-            return panels;
+        return panels;
     }
 
     private PanelDomain mapPanelDomain(List list) {
@@ -33,10 +46,10 @@ public class PanelSheetTransformer {
 
     private HashMap<String, Object> mapParticipantAndPaperDomains(List list, HashMap panel) throws Exception {
         List organizer = list.size() > 7 ? list.subList(2, 7) : null;
-        List chair = list.size() > 7 ? list.subList(7,12): null;
-        List commentator = list.size() > 43 ? list.subList(43,48) : null;
+        List chair = list.size() > 7 ? list.subList(7, 12) : null;
+        List commentator = list.size() > 43 ? list.subList(43, 48) : null;
         List participants = new ArrayList();
-        if(list.size() > 30) {
+        if (list.size() > 30) {
             if (list.get(30).equals("No")) {
                 participants = list.subList(12, 30);
             } else {
@@ -59,12 +72,10 @@ public class PanelSheetTransformer {
         return panel;
     }
 
-
-
     private HashMap mapPanelistsAndPapers(List participants, HashMap panel) throws Exception {
         List<ParticipantDomain> participantDomains = new ArrayList<>();
         List<PaperDomain> paperDomains = new ArrayList<>();
-        if(participants.size() % 6 == 0) {
+        if (participants.size() % 6 == 0) {
             for (int i = 0; i < participants.size(); i = i + 6) {
                 List participant = participants.subList(i, i + 6);
                 participantDomains.add(mapParticipantDomain(participant));
