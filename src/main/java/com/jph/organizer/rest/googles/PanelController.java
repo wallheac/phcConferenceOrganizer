@@ -1,4 +1,4 @@
-package com.jph.organizer.rest;
+package com.jph.organizer.rest.googles;
 
 import com.google.api.services.drive.model.File;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping
 public class PanelController {
     @Autowired
-    private SubmissionAccessor submissionAccessor;
+    private SubmissionMutator submissionMutator;
 
     @Autowired
     private SheetAccessor sheetAccessor;
@@ -32,7 +32,7 @@ public class PanelController {
         List<List<Object>> panelSheetValues = sheetAccessor.getPanelSheet();
         List<File> driveFiles = driveAccessor.getPanelDocs();
         List<HashMap<String, Object>> panels = panelTransformer.fromPanels(panelSheetValues, driveFiles);
-        panels.forEach(panel -> submissionAccessor.createPanel((HashMap) panel));
+        panels.forEach(panel -> submissionMutator.createPanel((HashMap) panel));
     }
 
     @GetMapping("/papers/init")
@@ -40,6 +40,6 @@ public class PanelController {
         List<List<Object>> paperSheetValues = sheetAccessor.getPaperSheet();
         List<File> driveFiles = driveAccessor.getPaperDocs();
         List<HashMap<String, Object>> papers = paperTransformer.fromPapers(paperSheetValues, driveFiles);
-        papers.forEach(paper -> submissionAccessor.createPaperSubmission((HashMap) paper));
+        papers.forEach(paper -> submissionMutator.createPaperSubmission((HashMap) paper));
     }
 }

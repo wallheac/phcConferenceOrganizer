@@ -1,4 +1,4 @@
-package com.jph.organizer.rest;
+package com.jph.organizer.rest.googles;
 
 import com.jph.organizer.domain.*;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @Transactional
-public class SubmissionAccessor {
+public class SubmissionMutator {
 
     @PersistenceContext
     private EntityManager entityManager;

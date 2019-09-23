@@ -1,4 +1,4 @@
-package com.jph.organizer.rest;
+package com.jph.organizer.rest.googles;
 
 import com.google.api.services.drive.model.File;
 import com.jph.organizer.domain.PaperDomain;
