@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @Transactional
-public class PanelSubmissionAccessor {
+public class SubmissionAccessor {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -33,7 +33,7 @@ public class PanelSubmissionAccessor {
             entityManager.persist(createParticipantRoleDomain(participantDomain, panelDomain,
                     PanelPositionDomain.PRESENTER));
 
-            paperDomain.setParticipantId(participantDomain.getParticipantId());
+            paperDomain.addParticipant(participantDomain);
             paperDomain.setPanelId(panelDomain.getPanelId());
 
             entityManager.persist(paperDomain);
@@ -53,5 +53,17 @@ public class PanelSubmissionAccessor {
 
     private void addParticipantToPanel(ParticipantDomain participantDomain, PanelDomain panelDomain) {
         panelDomain.addParticipant(participantDomain);
+    }
+
+    public void createPaperSubmission(HashMap paperMap) {
+        List<ParticipantDomain> participants = (List<ParticipantDomain>) paperMap.get("participants");
+        PaperDomain paper = (PaperDomain) paperMap.get("paper");
+        entityManager.persist(paper);
+        for(ParticipantDomain participant : participants) {
+            entityManager.persist(participant);
+            paper.addParticipant(participant);
+            participant.addPaper(paper);
+        }
+        entityManager.close();
     }
 }

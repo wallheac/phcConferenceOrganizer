@@ -4,6 +4,7 @@ import com.google.api.services.drive.model.File;
 import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.domain.ParticipantDomain;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,13 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
-public class PanelSheetTransformer {
+public class PanelTransformer {
 
     public List<HashMap<String, Object>> fromPanels(List<List<Object>> sheetValues, List<File> driveFiles) {
         List<HashMap<String, Object>> panels = new ArrayList<>();
         HashMap<String, String> docMap = mapDriveFiles(driveFiles);
         if (sheetValues == null || sheetValues.isEmpty()) {
-            System.out.println("No Data");
+            System.out.println("No Panel Data");
         } else {
             sheetValues.remove(0);
             for (List row : sheetValues) {
@@ -27,12 +28,7 @@ public class PanelSheetTransformer {
         return panels;
     }
 
-    private HashMap<String,String> mapDriveFiles(List<File> driveFiles) {
-        HashMap<String, String> docMap = new HashMap<>();
-        driveFiles.stream()
-                .forEach(file -> docMap.put(file.getName(), file.getId()));
-        return docMap;
-    }
+
 
     public List<HashMap<String, Object>> fromPanel(List<HashMap<String, Object>> panels, List row, HashMap docMap) {
         HashMap<String, Object> panelMap = new HashMap();
@@ -46,10 +42,20 @@ public class PanelSheetTransformer {
         return panels;
     }
 
+    private HashMap<String,String> mapDriveFiles(List<File> driveFiles) {
+        HashMap<String, String> docMap = new HashMap<>();
+        driveFiles.stream()
+                .forEach(file -> docMap.put(StringEscapeUtils.unescapeHtml4(file.getName()), file.getId()));
+        return docMap;
+    }
+
     private PanelDomain mapPanelDomain(List list, HashMap docMap) {
         String notes = list.size() == 54 ? list.get(53).toString() : null;
-        String abstractUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1).toString());
-        String cvUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1).toString());
+        if(docMap.get(list.get(1)) == null || docMap.get(list.get(1)).equals("")) {
+            System.out.println("failed to map title: " + list.get(1));
+        }
+        String abstractUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1));
+        String cvUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1));
         return new PanelDomain(list.get(1).toString(), null, "SUBMITTED", false,
                 null, null, cvUrl, abstractUrl, notes,
                 false, null, null);
@@ -102,12 +108,12 @@ public class PanelSheetTransformer {
     }
 
     private PaperDomain mapPaperDomain(List participant) {
-        return new PaperDomain(null, participant.get(5).toString(), null, null, false);
+        return new PaperDomain(participant.get(5).toString(), null, null, false);
     }
 
-    ParticipantDomain mapParticipantDomain(List particpantInformation) {
-        return new ParticipantDomain(particpantInformation.get(0).toString(), particpantInformation.get(1).toString(),
-                particpantInformation.get(2).toString(), particpantInformation.get(3).toString(),
-                particpantInformation.get(4).toString(), null, null, null);
+    ParticipantDomain mapParticipantDomain(List participantInformation) {
+        return new ParticipantDomain(participantInformation.get(0).toString(), participantInformation.get(1).toString(),
+                participantInformation.get(2).toString(), participantInformation.get(3).toString(),
+                participantInformation.get(4).toString(), null);
     }
 }

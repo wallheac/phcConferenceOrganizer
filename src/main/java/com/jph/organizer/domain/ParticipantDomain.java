@@ -9,8 +9,10 @@ import java.util.List;
 public class ParticipantDomain {
     @Id
     @GeneratedValue
-    @Column(name="participant_id")
     private Integer participantId;
+
+    @ManyToMany(mappedBy="participantDomains")
+    private List<PaperDomain> paperDomains = new ArrayList<>();
 
     @Column(name="first_name")
     private String firstName;
@@ -24,12 +26,6 @@ public class ParticipantDomain {
 
     private String email;
 
-    @Column(name="cv_url")
-    private String cvUrl;
-
-    @Column(name="abstract_url")
-    private String abstractUrl;
-
     private String notes;
 
     @ManyToMany(mappedBy="participants")
@@ -39,15 +35,17 @@ public class ParticipantDomain {
     }
 
     public ParticipantDomain(String firstName, String lastName, String status, String institution, String email,
-                             String cvUrl, String abstractUrl, String notes) {
+                             String notes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
         this.institution = institution;
         this.email = email;
-        this.cvUrl = cvUrl;
-        this.abstractUrl = abstractUrl;
         this.notes = notes;
+    }
+
+    public void addPaper(PaperDomain paperDomain) {
+        paperDomains.add(paperDomain);
     }
 
     public List<PanelDomain> getPanels() {
@@ -56,6 +54,14 @@ public class ParticipantDomain {
 
     public void setPanels(List<PanelDomain> panels) {
         this.panels = panels;
+    }
+
+    public List<PaperDomain> getPaperDomains() {
+        return paperDomains;
+    }
+
+    public void setPaperDomains(List<PaperDomain> paperDomains) {
+        this.paperDomains = paperDomains;
     }
 
     public Integer getParticipantId() {
@@ -104,22 +110,6 @@ public class ParticipantDomain {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getCvUrl() {
-        return cvUrl;
-    }
-
-    public void setCvUrl(String cvUrl) {
-        this.cvUrl = cvUrl;
-    }
-
-    public String getAbstractUrl() {
-        return abstractUrl;
-    }
-
-    public void setAbstractUrl(String abstractUrl) {
-        this.abstractUrl = abstractUrl;
     }
 
     public String getNotes() {

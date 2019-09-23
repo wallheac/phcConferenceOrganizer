@@ -37,8 +37,8 @@ public class GoogleAuthorizationUtility {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String SHEETS_SCOPES = SheetsScopes.SPREADSHEETS;
     private static final String DRIVE_SCOPES = DriveScopes.DRIVE;
-    private Sheets sheets;
-    private Drive drive;
+    private Sheets sheets = null;
+    private Drive drive = null;
 
     public void authorizeGoogle() {
         try {

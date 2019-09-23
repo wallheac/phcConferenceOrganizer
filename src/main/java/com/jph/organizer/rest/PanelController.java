@@ -13,22 +13,33 @@ import java.util.List;
 @RequestMapping
 public class PanelController {
     @Autowired
-    private PanelSubmissionAccessor panelSubmissionAccessor;
+    private SubmissionAccessor submissionAccessor;
 
     @Autowired
-    private PanelSheetAccessor panelSheetAccessor;
+    private SheetAccessor sheetAccessor;
 
     @Autowired
-    private PanelSheetTransformer panelSheetTransformer;
+    private PanelTransformer panelTransformer;
 
     @Autowired
-    private PanelDriveAccessor panelDriveAccessor;
+    private PaperTransformer paperTransformer;
+
+    @Autowired
+    private DriveAccessor driveAccessor;
 
     @GetMapping("/panels/init")
-    public void initDatabase() {
-        List<List<Object>> sheetValues = panelSheetAccessor.getSheet();
-        List<File> driveFiles = panelDriveAccessor.getDocs();
-        List<HashMap<String, Object>> panels = panelSheetTransformer.fromPanels(sheetValues, driveFiles);
-        panels.forEach(panel -> panelSubmissionAccessor.createPanel((HashMap) panel));
+    public void initPanels() {
+        List<List<Object>> panelSheetValues = sheetAccessor.getPanelSheet();
+        List<File> driveFiles = driveAccessor.getPanelDocs();
+        List<HashMap<String, Object>> panels = panelTransformer.fromPanels(panelSheetValues, driveFiles);
+        panels.forEach(panel -> submissionAccessor.createPanel((HashMap) panel));
+    }
+
+    @GetMapping("/papers/init")
+    public void initPapers() {
+        List<List<Object>> paperSheetValues = sheetAccessor.getPaperSheet();
+        List<File> driveFiles = driveAccessor.getPaperDocs();
+        List<HashMap<String, Object>> papers = paperTransformer.fromPapers(paperSheetValues, driveFiles);
+        papers.forEach(paper -> submissionAccessor.createPaperSubmission((HashMap) paper));
     }
 }

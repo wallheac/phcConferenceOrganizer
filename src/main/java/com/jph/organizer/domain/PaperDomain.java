@@ -1,14 +1,25 @@
 package com.jph.organizer.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name="Paper")
 @Table(name="paper")
 public class PaperDomain {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
-    private Integer participantId;
+    @Column(name="paper_id")
+    private Integer paperId;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST
+    })
+    @JoinTable(name="paper_participant",
+            joinColumns=@JoinColumn(name="paper_id"),
+            inverseJoinColumns = @JoinColumn(name="participant_id")
+    )
+    private List<ParticipantDomain> participantDomains = new ArrayList();
     private String title;
     private String abstractUrl;
     private Integer panelId;
@@ -17,28 +28,31 @@ public class PaperDomain {
     public PaperDomain() {
     }
 
-    public PaperDomain(Integer participantId, String title, String abstractUrl, Integer panelId, Boolean accepted) {
-        this.participantId = participantId;
+    public PaperDomain(String title, String abstractUrl, Integer panelId, Boolean accepted) {
         this.title = title;
         this.abstractUrl = abstractUrl;
         this.panelId = panelId;
         this.accepted = accepted;
     }
 
-    public Integer getId() {
-        return id;
+    public void addParticipant(ParticipantDomain participant) {
+        participantDomains.add(participant);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Integer getPaperId() {
+        return paperId;
     }
 
-    public Integer getParticipantId() {
-        return participantId;
+    public void setPaperId(Integer paperId) {
+        this.paperId = paperId;
     }
 
-    public void setParticipantId(Integer participantId) {
-        this.participantId = participantId;
+    public List<ParticipantDomain> getParticipantDomains() {
+        return participantDomains;
+    }
+
+    public void setParticipantDomains(List<ParticipantDomain> participantDomains) {
+        this.participantDomains = participantDomains;
     }
 
     public String getTitle() {

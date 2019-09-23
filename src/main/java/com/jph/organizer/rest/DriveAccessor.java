@@ -11,19 +11,29 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-public class PanelDriveAccessor {
+public class DriveAccessor {
 
     @Autowired
     private GoogleAuthorizationUtility authUtility;
 
-    public List<File> getDocs() {
-        Drive drive = authUtility.getDrive();
+    private final String PANEL_FOLDER_ID = "0B1oco1Xr9_r3bzdRcFRScFJudTg";
+    private final String PAPER_FOLDER_ID = "0B1oco1Xr9_r3S3J0VEZaNWtPWFE";
+
+    public List<File> getPanelDocs() {
+        Drive drive = getDrive();
 //        pattern for a query by name "name='" + panelDomain.getPanelName() + "'"
 //        the below is a query by the parent folder ID ... it lists all the children
-        String topLevelFolderQuery = "'0B1oco1Xr9_r3bzdRcFRScFJudTg' in parents";
+        String topLevelFolderQuery = "'" + PANEL_FOLDER_ID +"' in parents";
         FileList files = getFileList(drive, topLevelFolderQuery);
         return (List<File>) files.get("files");
 
+    }
+
+    public List<File> getPaperDocs() {
+        Drive drive = getDrive();
+        String topLevelFolderQuery = "'" + PAPER_FOLDER_ID +"' in parents";
+        FileList files = getFileList(drive, topLevelFolderQuery);
+        return (List<File>) files.get("files");
     }
 
     private FileList getFileList(Drive drive, String query) {
@@ -42,5 +52,13 @@ public class PanelDriveAccessor {
             e.printStackTrace();
         }
         return new FileList();
+    }
+
+    private Drive getDrive () {
+        Drive drive = authUtility.getDrive();
+        if (drive == null) {
+            authUtility.authorizeGoogle();
+        }
+        return authUtility.getDrive();
     }
 }
