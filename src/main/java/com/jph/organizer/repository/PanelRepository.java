@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PanelRepository extends JpaRepository<PanelDomain, Integer> {
+    PanelDomain findByPanelIdEquals(Integer panelId);
 }

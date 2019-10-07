@@ -12,18 +12,15 @@ import java.util.List;
 @Controller
 @RequestMapping
 public class PanelController {
+
     @Autowired
     private SubmissionMutator submissionMutator;
-
     @Autowired
     private SheetAccessor sheetAccessor;
-
     @Autowired
     private PanelTransformer panelTransformer;
-
     @Autowired
     private PaperTransformer paperTransformer;
-
     @Autowired
     private DriveAccessor driveAccessor;
 
