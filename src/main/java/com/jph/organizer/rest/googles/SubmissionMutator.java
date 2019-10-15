@@ -16,9 +16,10 @@ public class SubmissionMutator {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void createPanel(HashMap panel){
+    public void createPanel(HashMap panel) {
         PanelDomain panelDomain = (PanelDomain) panel.get("panel");
 
+        entityManager.persist(panelDomain.getContact());
         entityManager.persist(panelDomain);
 
         List panelists = (List) panel.get("panelists");
@@ -28,8 +29,8 @@ public class SubmissionMutator {
             PaperDomain paperDomain = (PaperDomain) papers.get(i);
 
             addParticipantToPanel(participantDomain, panelDomain);
-
             entityManager.persist(participantDomain);
+
             entityManager.persist(createParticipantRoleDomain(participantDomain, panelDomain,
                     PanelPositionDomain.PRESENTER));
 
@@ -38,6 +39,14 @@ public class SubmissionMutator {
 
             entityManager.persist(paperDomain);
         }
+        entityManager.persist(panel.get("chair"));
+        entityManager.persist(createParticipantRoleDomain((ParticipantDomain) panel.get("chair"),
+                panelDomain, PanelPositionDomain.CHAIR));
+
+        entityManager.persist(panel.get("commentator"));
+        entityManager.persist(createParticipantRoleDomain((ParticipantDomain) panel.get("commentator"),
+                panelDomain, PanelPositionDomain.COMMENTATOR));
+
         entityManager.close();
     }
 
@@ -59,7 +68,7 @@ public class SubmissionMutator {
         List<ParticipantDomain> participants = (List<ParticipantDomain>) paperMap.get("participants");
         PaperDomain paper = (PaperDomain) paperMap.get("paper");
         entityManager.persist(paper);
-        for(ParticipantDomain participant : participants) {
+        for (ParticipantDomain participant : participants) {
             entityManager.persist(participant);
             paper.addParticipant(participant);
             participant.addPaper(paper);

@@ -13,7 +13,7 @@ public class PaperAccessor {
     @Autowired
     private PaperRepository paperRepository;
 
-    public List<PaperDomain> getPaperByPanelId(Integer panelId) {
+    public List<PaperDomain> getPapersByPanelId(Integer panelId) {
         return paperRepository.findAllByPanelIdEquals(panelId);
 
     }

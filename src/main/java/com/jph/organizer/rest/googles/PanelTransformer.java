@@ -4,6 +4,7 @@ import com.google.api.services.drive.model.File;
 import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.domain.ParticipantDomain;
+import com.jph.organizer.rest.respresentation.Participant;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +57,9 @@ public class PanelTransformer {
         }
         String abstractUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1));
         String cvUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1));
-        return new PanelDomain(list.get(1).toString(), null, "SUBMITTED", false,
+        ParticipantDomain contact = new ParticipantDomain(list.get(2).toString(), list.get(3).toString(),
+                list.get(4).toString(), list.get(5).toString(), list.get(6).toString(), null);
+        return new PanelDomain(list.get(1).toString(), contact, "SUBMITTED", false,
                 null, null, cvUrl, abstractUrl, notes,
                 false, null, null);
     }

@@ -29,7 +29,7 @@ public class PanelController {
         List<List<Object>> panelSheetValues = sheetAccessor.getPanelSheet();
         List<File> driveFiles = driveAccessor.getPanelDocs();
         List<HashMap<String, Object>> panels = panelTransformer.fromPanels(panelSheetValues, driveFiles);
-        panels.forEach(panel -> submissionMutator.createPanel((HashMap) panel));
+        panels.forEach(panel -> submissionMutator.createPanel(panel));
     }
 
     @GetMapping("/papers/init")
