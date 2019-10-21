@@ -19,49 +19,84 @@ public class SubmissionMutator {
     public void createPanel(HashMap panel) {
         PanelDomain panelDomain = (PanelDomain) panel.get("panel");
 
-        entityManager.persist(panelDomain.getContact());
         entityManager.persist(panelDomain);
 
         List panelists = (List) panel.get("panelists");
         List papers = (List) panel.get("papers");
+
+        persistPanelistsAndPapers(panelists, papers, panelDomain);
+
+        ParticipantDomain chair = null;
+        if (panel.get("chair") != null) {
+            chair = (ParticipantDomain) panel.get("chair");
+            if(!panelists.contains(chair)) {
+                entityManager.persist(chair);
+            }
+            if (chair != null) {
+                entityManager.persist(chair);
+                ParticipantRoleDomain chairRole = createParticipantRoleDomain(chair, panelDomain, PanelPositionDomain.CHAIR);
+                entityManager.persist(chairRole);
+                chair.setParticipantRoleDomain(chairRole);
+            }
+        }
+
+        if (panel.get("commentator") != null) {
+            ParticipantDomain commentator = (ParticipantDomain) panel.get("commentator");
+            if (!panelists.contains(commentator) && !chair.equals(commentator)) {
+                entityManager.persist(commentator);
+            }
+            if(chair != null && chair.equals(commentator)){
+                chair.getParticipantRoleDomain().setCommentator(true);
+            }
+            ParticipantDomain matchingPanelist = findMatchingPanelist(panelists, commentator);
+            if (matchingPanelist != null) {
+                matchingPanelist.getParticipantRoleDomain().setChair(true);
+            }
+        }
+
+        entityManager.close();
+    }
+
+    private void persistPanelistsAndPapers(List panelists, List papers, PanelDomain panelDomain) {
         for (int i = 0; i < panelists.size(); i++) {
+
             ParticipantDomain participantDomain = (ParticipantDomain) panelists.get(i);
             PaperDomain paperDomain = (PaperDomain) papers.get(i);
 
-            addParticipantToPanel(participantDomain, panelDomain);
             entityManager.persist(participantDomain);
+            ParticipantRoleDomain participantRoleDomain = createParticipantRoleDomain(participantDomain, panelDomain,
+                    PanelPositionDomain.PRESENTER);
 
-            entityManager.persist(createParticipantRoleDomain(participantDomain, panelDomain,
-                    PanelPositionDomain.PRESENTER));
+            entityManager.persist(participantRoleDomain);
+            participantDomain.setParticipantRoleDomain(participantRoleDomain);
+            panelDomain.setParticipantRoleDomain(participantRoleDomain);
 
             paperDomain.addParticipant(participantDomain);
             paperDomain.setPanelId(panelDomain.getPanelId());
 
             entityManager.persist(paperDomain);
         }
-        entityManager.persist(panel.get("chair"));
-        entityManager.persist(createParticipantRoleDomain((ParticipantDomain) panel.get("chair"),
-                panelDomain, PanelPositionDomain.CHAIR));
+    }
 
-        entityManager.persist(panel.get("commentator"));
-        entityManager.persist(createParticipantRoleDomain((ParticipantDomain) panel.get("commentator"),
-                panelDomain, PanelPositionDomain.COMMENTATOR));
-
-        entityManager.close();
+    private ParticipantDomain findMatchingPanelist(List panelists, ParticipantDomain target) {
+        return (ParticipantDomain) panelists.stream().filter(target::equals).findFirst().orElse(null);
     }
 
     private ParticipantRoleDomain createParticipantRoleDomain(ParticipantDomain participantDomain, PanelDomain panelDomain,
                                                               PanelPositionDomain panelPositionDomain) {
-        ParticipantRoleDomain participantRoleDomain = new ParticipantRoleDomain();
-        participantRoleDomain.setParticipantId(participantDomain.getParticipantId());
-        participantRoleDomain.setPanelId(panelDomain.getPanelId());
-        participantRoleDomain.setPanelPosition(panelPositionDomain.toString());
+        ParticipantRoleDomain participantRoleDomain = new ParticipantRoleDomain
+                (new ParticipantRoleIdDomain(panelDomain.getPanelId(), participantDomain.getParticipantId()), false, false, false, false);
+
+        calculateRoles(participantRoleDomain, panelPositionDomain);
 
         return participantRoleDomain;
     }
 
-    private void addParticipantToPanel(ParticipantDomain participantDomain, PanelDomain panelDomain) {
-        panelDomain.addParticipant(participantDomain);
+    private void calculateRoles(ParticipantRoleDomain participantRoleDomain, PanelPositionDomain panelPositionDomain) {
+        participantRoleDomain.setContact(panelPositionDomain.equals(PanelPositionDomain.CONTACT));
+        participantRoleDomain.setChair(panelPositionDomain.equals(PanelPositionDomain.CHAIR));
+        participantRoleDomain.setCommentator(panelPositionDomain.equals(PanelPositionDomain.COMMENTATOR));
+        participantRoleDomain.setPresenter(panelPositionDomain.equals(PanelPositionDomain.PRESENTER));
     }
 
     public void createPaperSubmission(HashMap paperMap) {

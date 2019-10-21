@@ -57,9 +57,7 @@ public class PanelTransformer {
         }
         String abstractUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1));
         String cvUrl = "https://drive.google.com/drive/u/0/folders/" + docMap.get(list.get(1));
-        ParticipantDomain contact = new ParticipantDomain(list.get(2).toString(), list.get(3).toString(),
-                list.get(4).toString(), list.get(5).toString(), list.get(6).toString(), null);
-        return new PanelDomain(list.get(1).toString(), contact, "SUBMITTED", false,
+        return new PanelDomain(list.get(1).toString(), null, "SUBMITTED", false,
                 null, null, cvUrl, abstractUrl, notes,
                 false, null, null);
     }

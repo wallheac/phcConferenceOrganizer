@@ -28,8 +28,16 @@ public class ParticipantDomain {
 
     private String notes;
 
-    @ManyToMany(mappedBy="participants")
-    private List<PanelDomain> panels = new ArrayList<>();
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(
+                    name = "panel",
+                    referencedColumnName = "panel"),
+            @JoinColumn(
+                    name = "participant",
+                    referencedColumnName = "participant")
+    })
+    private ParticipantRoleDomain participantRoleDomain;
 
     public ParticipantDomain() {
     }
@@ -44,16 +52,16 @@ public class ParticipantDomain {
         this.notes = notes;
     }
 
+    public ParticipantRoleDomain getParticipantRoleDomain() {
+        return participantRoleDomain;
+    }
+
+    public void setParticipantRoleDomain(ParticipantRoleDomain participantRoleDomain) {
+        this.participantRoleDomain = participantRoleDomain;
+    }
+
     public void addPaper(PaperDomain paperDomain) {
         paperDomains.add(paperDomain);
-    }
-
-    public List<PanelDomain> getPanels() {
-        return panels;
-    }
-
-    public void setPanels(List<PanelDomain> panels) {
-        this.panels = panels;
     }
 
     public List<PaperDomain> getPaperDomains() {
@@ -119,4 +127,21 @@ public class ParticipantDomain {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if(this == other){
+            return true;
+        }
+        if(other == null || other.getClass() != this.getClass()){
+            return false;
+        }
+        ParticipantDomain participantDomain = (ParticipantDomain) other;
+
+        return(participantDomain.firstName.equals(this.firstName) &&
+                participantDomain.lastName.equals(this.lastName) &&
+                participantDomain.email.equals(this.email));
+    }
 }
+
+

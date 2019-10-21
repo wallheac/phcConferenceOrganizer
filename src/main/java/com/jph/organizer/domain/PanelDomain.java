@@ -1,9 +1,7 @@
 package com.jph.organizer.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity(name="Panel")
 @Table(name="panel")
@@ -44,21 +42,23 @@ public class PanelDomain {
     @Column(name="av_request_date")
     private Date avRequestDate;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(
+                    name = "panel",
+                    referencedColumnName = "panel"),
+            @JoinColumn(
+                    name = "participant",
+                    referencedColumnName = "participant")
     })
-    @JoinTable(name="panel_participant",
-        joinColumns=@JoinColumn(name="panel_id"),
-        inverseJoinColumns = @JoinColumn(name="participant_id")
-    )
-    private List<ParticipantDomain> participants = new ArrayList<>();
+    private ParticipantRoleDomain participantRoleDomain;
 
     public PanelDomain() {
     }
 
     public PanelDomain(String panelName, ParticipantDomain contact, String type, Boolean accepted, Date dateTime,
                        String location, String cvUrl, String abstractUrl, String notes, Boolean avRequested,
-                       String requestor, Date avRequestDate, ParticipantDomain... participants) {
+                       String requestor, Date avRequestDate, ParticipantDomain... participantDomains) {
         this.panelName = panelName;
         this.contact = contact;
         this.type = type;
@@ -71,16 +71,6 @@ public class PanelDomain {
         this.avRequested = avRequested;
         this.requestor = requestor;
         this.avRequestDate = avRequestDate;
-    }
-
-    public void addParticipant(ParticipantDomain participantDomain) {
-        participants.add(participantDomain);
-        participantDomain.getPanels().add(this);
-    }
-
-    public void removeParticipant(ParticipantDomain participantDomain) {
-        participants.remove(participantDomain);
-        participantDomain.getPanels().remove(this);
     }
 
     public int getPanelId() {
@@ -187,11 +177,11 @@ public class PanelDomain {
         this.avRequestDate = avRequestDate;
     }
 
-    public List<ParticipantDomain> getParticipants() {
-        return participants;
+    public ParticipantRoleDomain getParticipantRoleDomain() {
+        return this.participantRoleDomain;
     }
 
-    public void setParticipants(List<ParticipantDomain> participants) {
-        this.participants = participants;
+    public void setParticipantRoleDomain(ParticipantRoleDomain participantRoleDomain) {
+        this.participantRoleDomain = participantRoleDomain;
     }
 }

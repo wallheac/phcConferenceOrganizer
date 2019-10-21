@@ -5,51 +5,67 @@ import javax.persistence.*;
 @Entity(name="ParticipantRole")
 @Table(name="participant_role")
 public class ParticipantRoleDomain {
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
-    private Integer participantId;
-    private Integer panelId;
-    private String panelPosition;
+
+   @EmbeddedId
+   private ParticipantRoleIdDomain participantRoleIdDomain;
+
+    private Boolean presenter;
+
+    private Boolean commentator;
+
+    private Boolean chair;
+
+    private Boolean contact;
 
     public ParticipantRoleDomain() {
     }
 
-    public ParticipantRoleDomain(Integer participantId, Integer panelId, String panelPosition) {
-        this.participantId = participantId;
-        this.panelId = panelId;
-        this.panelPosition = panelPosition;
+    public ParticipantRoleDomain(ParticipantRoleIdDomain participantRoleIdDomain, Boolean presenter, Boolean commentator,
+                                 Boolean chair, Boolean contact) {
+        this.participantRoleIdDomain = participantRoleIdDomain;
+        this.presenter = presenter;
+        this.commentator = commentator;
+        this.chair = chair;
+        this.contact = contact;
     }
 
-    public Integer getId() {
-        return id;
+    public ParticipantRoleIdDomain getParticipantRoleIdDomain() {
+        return participantRoleIdDomain;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setParticipantRoleIdDomain(ParticipantRoleIdDomain participantRoleIdDomain) {
+        this.participantRoleIdDomain = participantRoleIdDomain;
     }
 
-    public Integer getParticipantId() {
-        return participantId;
+    public Boolean getPresenter() {
+        return presenter;
     }
 
-    public void setParticipantId(Integer participantId) {
-        this.participantId = participantId;
+    public void setPresenter(Boolean presenter) {
+        this.presenter = presenter;
     }
 
-    public Integer getPanelId() {
-        return panelId;
+    public Boolean getCommentator() {
+        return commentator;
     }
 
-    public void setPanelId(Integer panelId) {
-        this.panelId = panelId;
+    public void setCommentator(Boolean commentator) {
+        this.commentator = commentator;
     }
 
-    public String getPanelPosition() {
-        return panelPosition;
+    public Boolean getChair() {
+        return chair;
     }
 
-    public void setPanelPosition(String panelPosition) {
-        this.panelPosition = panelPosition;
+    public void setChair(Boolean chair) {
+        this.chair = chair;
+    }
+
+    public Boolean getContact() {
+        return contact;
+    }
+
+    public void setContact(Boolean contact) {
+        this.contact = contact;
     }
 }
