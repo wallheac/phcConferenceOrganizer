@@ -30,21 +30,23 @@ public class OrganizerPanelTransformer {
         int panelId = panelDomain.getPanelId();
         List<PaperDomain> paperDomains = paperAccessor
                 .getPapersByPanelId(panelId);
-        ParticipantRoleDomain participantRoleDomain = panelDomain.getParticipantRoleDomain();
-//        List<Participant> participants = participantRoles.stream().map(role -> mapParticipant(role, paperDomains)).collect(Collectors.toList());
-        return mapPanel(panelDomain, Collections.EMPTY_LIST);
+        List<Participant> participants = panelDomain.getParticipants()
+                .stream()
+                .map(participantDomain -> mapParticipant(participantDomain, paperDomains))
+                .collect(Collectors.toList());
+
+        return mapPanel(panelDomain, participants);
     }
 
-//    private Participant mapParticipant(ParticipantRoleDomain role, List<PaperDomain> paperDomains) {
-//        ParticipantDomain participantDomain = role .getParticipant();
-//        if (participantDomain != null) {
-//            Paper paper = mapPaper(matchPaperDomain(participantDomain.getParticipantId(), paperDomains));
-//            return new Participant(participantDomain.getParticipantId(), participantDomain.getFirstName(),
-//                    participantDomain.getLastName(), participantDomain.getStatus(), participantDomain.getInstitution(),
-//                    participantDomain.getEmail(), participantDomain.getNotes(), paper);
-//        }
-//        return null;
-//    }
+    private Participant mapParticipant(ParticipantDomain participantDomain, List<PaperDomain> paperDomains) {
+        if (participantDomain != null) {
+            Paper paper = mapPaper(matchPaperDomain(participantDomain.getParticipantId(), paperDomains));
+            return new Participant(participantDomain.getParticipantId(), participantDomain.getFirstName(),
+                    participantDomain.getLastName(), participantDomain.getStatus(), participantDomain.getInstitution(),
+                    participantDomain.getEmail(), participantDomain.getNotes(), paper);
+        }
+        return null;
+    }
 
     private Panel mapPanel(PanelDomain panelDomain, List<Participant> participants) {
         return new Panel(panelDomain.getPanelId(), panelDomain.getPanelName(), null,

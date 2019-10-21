@@ -39,6 +39,9 @@ public class ParticipantDomain {
     })
     private ParticipantRoleDomain participantRoleDomain;
 
+    @ManyToMany(mappedBy="participants")
+    private List<PanelDomain> panels = new ArrayList<>();
+
     public ParticipantDomain() {
     }
 
@@ -62,6 +65,14 @@ public class ParticipantDomain {
 
     public void addPaper(PaperDomain paperDomain) {
         paperDomains.add(paperDomain);
+    }
+
+    public List<PanelDomain> getPanels() {
+        return panels;
+    }
+
+    public void setPanels(List<PanelDomain> panels) {
+        this.panels = panels;
     }
 
     public List<PaperDomain> getPaperDomains() {

@@ -69,6 +69,7 @@ public class SubmissionMutator {
 
             entityManager.persist(participantRoleDomain);
             participantDomain.setParticipantRoleDomain(participantRoleDomain);
+            panelDomain.addParticipant(participantDomain);
             panelDomain.setParticipantRoleDomain(participantRoleDomain);
 
             paperDomain.addParticipant(participantDomain);

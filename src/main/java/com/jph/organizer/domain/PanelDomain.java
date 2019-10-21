@@ -1,7 +1,9 @@
 package com.jph.organizer.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name="Panel")
 @Table(name="panel")
@@ -53,6 +55,16 @@ public class PanelDomain {
     })
     private ParticipantRoleDomain participantRoleDomain;
 
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST
+    })
+    @JoinTable(name="panel_participant",
+        joinColumns=@JoinColumn(name="panel_id"),
+        inverseJoinColumns = @JoinColumn(name="participant_id")
+    )
+    private List<ParticipantDomain> participants = new ArrayList<>();
+
     public PanelDomain() {
     }
 
@@ -71,6 +83,20 @@ public class PanelDomain {
         this.avRequested = avRequested;
         this.requestor = requestor;
         this.avRequestDate = avRequestDate;
+    }
+
+//    public void addParticipantRoleDomain(ParticipantRoleDomain participantRoleDomain) {
+//        participantRoleDomains.add(participantRoleDomain);
+//    }
+
+    public void addParticipant(ParticipantDomain participantDomain) {
+        participants.add(participantDomain);
+        participantDomain.getPanels().add(this);
+    }
+
+    public void removeParticipant(ParticipantDomain participantDomain) {
+        participants.remove(participantDomain);
+        participantDomain.getPanels().remove(this);
     }
 
     public int getPanelId() {
@@ -183,5 +209,13 @@ public class PanelDomain {
 
     public void setParticipantRoleDomain(ParticipantRoleDomain participantRoleDomain) {
         this.participantRoleDomain = participantRoleDomain;
+    }
+
+    public List<ParticipantDomain> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<ParticipantDomain> participants) {
+        this.participants = participants;
     }
 }
