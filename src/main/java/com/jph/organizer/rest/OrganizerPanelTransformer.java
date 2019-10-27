@@ -1,16 +1,14 @@
 package com.jph.organizer.rest;
 
-import com.jph.organizer.domain.PanelDomain;
-import com.jph.organizer.domain.PaperDomain;
-import com.jph.organizer.domain.ParticipantDomain;
-import com.jph.organizer.domain.ParticipantRoleDomain;
+import com.jph.organizer.domain.*;
 import com.jph.organizer.rest.respresentation.Panel;
 import com.jph.organizer.rest.respresentation.Paper;
 import com.jph.organizer.rest.respresentation.Participant;
+import com.jph.organizer.rest.respresentation.RoleAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,9 +16,9 @@ import java.util.stream.Collectors;
 public class OrganizerPanelTransformer {
 
     @Autowired
-    ParticipantAccessor participantAccessor;
+    private PaperAccessor paperAccessor;
     @Autowired
-    PaperAccessor paperAccessor;
+    private RoleAccessor roleAccessor;
 
     public List<Panel> fromPanelDomains(List<PanelDomain> panelDomains) {
         return panelDomains.stream().map(this::fromPanelDomain).collect(Collectors.toList());
@@ -30,22 +28,49 @@ public class OrganizerPanelTransformer {
         int panelId = panelDomain.getPanelId();
         List<PaperDomain> paperDomains = paperAccessor
                 .getPapersByPanelId(panelId);
+        List<ParticipantRoleDomain> roles = roleAccessor.getParticipantRoleDomainsByPanelId(panelId);
         List<Participant> participants = panelDomain.getParticipants()
                 .stream()
-                .map(participantDomain -> mapParticipant(participantDomain, paperDomains))
+                .map(participantDomain -> mapParticipant(participantDomain, paperDomains, roles))
                 .collect(Collectors.toList());
 
         return mapPanel(panelDomain, participants);
     }
 
-    private Participant mapParticipant(ParticipantDomain participantDomain, List<PaperDomain> paperDomains) {
+    private Participant mapParticipant(ParticipantDomain participantDomain, List<PaperDomain> paperDomains,
+                                       List<ParticipantRoleDomain> roles) {
         if (participantDomain != null) {
+            List<String> roleList = calculateRoles(participantDomain, roles);
             Paper paper = mapPaper(matchPaperDomain(participantDomain.getParticipantId(), paperDomains));
             return new Participant(participantDomain.getParticipantId(), participantDomain.getFirstName(),
                     participantDomain.getLastName(), participantDomain.getStatus(), participantDomain.getInstitution(),
-                    participantDomain.getEmail(), participantDomain.getNotes(), paper);
+                    roleList, participantDomain.getEmail(), participantDomain.getNotes(), paper);
         }
         return null;
+    }
+
+    private List<String> calculateRoles(ParticipantDomain participantDomain, List<ParticipantRoleDomain> roles) {
+        ParticipantRoleDomain participantRoleDomain = roles
+                .stream()
+                .filter(participantRole -> participantRole.getParticipantRoleIdDomain().getParticipantId().equals(participantDomain.getParticipantId()))
+                .findFirst()
+                .orElse(null);
+        List<String> roleList = new ArrayList<>();
+        if (participantRoleDomain != null) {
+            if(participantRoleDomain.getChair()) {
+                roleList.add(PanelPositionDomain.CHAIR.toString());
+            }
+            if(participantRoleDomain.getCommentator()) {
+                roleList.add(PanelPositionDomain.COMMENTATOR.toString());
+            }
+            if(participantRoleDomain.getContact()) {
+                roleList.add(PanelPositionDomain.CONTACT.toString());
+            }
+            if(participantRoleDomain.getPresenter()) {
+                roleList.add(PanelPositionDomain.PRESENTER.toString());
+            }
+        }
+        return roleList;
     }
 
     private Panel mapPanel(PanelDomain panelDomain, List<Participant> participants) {
@@ -70,6 +95,5 @@ public class OrganizerPanelTransformer {
                         .anyMatch(participantDomain -> participantDomain.getParticipantId() == participantId))
                 .findFirst()
                 .orElse(null);
-
     }
 }

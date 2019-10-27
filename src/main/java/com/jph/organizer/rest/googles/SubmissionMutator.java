@@ -25,34 +25,9 @@ public class SubmissionMutator {
         List papers = (List) panel.get("papers");
 
         persistPanelistsAndPapers(panelists, papers, panelDomain);
-
-        ParticipantDomain chair = null;
-        if (panel.get("chair") != null) {
-            chair = (ParticipantDomain) panel.get("chair");
-            if(!panelists.contains(chair)) {
-                entityManager.persist(chair);
-            }
-            if (chair != null) {
-                entityManager.persist(chair);
-                ParticipantRoleDomain chairRole = createParticipantRoleDomain(chair, panelDomain, PanelPositionDomain.CHAIR);
-                entityManager.persist(chairRole);
-                chair.setParticipantRoleDomain(chairRole);
-            }
-        }
-
-        if (panel.get("commentator") != null) {
-            ParticipantDomain commentator = (ParticipantDomain) panel.get("commentator");
-            if (!panelists.contains(commentator) && !chair.equals(commentator)) {
-                entityManager.persist(commentator);
-            }
-            if(chair != null && chair.equals(commentator)){
-                chair.getParticipantRoleDomain().setCommentator(true);
-            }
-            ParticipantDomain matchingPanelist = findMatchingPanelist(panelists, commentator);
-            if (matchingPanelist != null) {
-                matchingPanelist.getParticipantRoleDomain().setChair(true);
-            }
-        }
+        persistSupporting(panelDomain, (ParticipantDomain) panel.get("chair"), PanelPositionDomain.CHAIR);
+        persistSupporting(panelDomain, (ParticipantDomain) panel.get("commentator"), PanelPositionDomain.COMMENTATOR);
+        persistSupporting(panelDomain, (ParticipantDomain) panel.get("organizer"), PanelPositionDomain.CONTACT);
 
         entityManager.close();
     }
@@ -63,24 +38,84 @@ public class SubmissionMutator {
             ParticipantDomain participantDomain = (ParticipantDomain) panelists.get(i);
             PaperDomain paperDomain = (PaperDomain) papers.get(i);
 
-            entityManager.persist(participantDomain);
-            ParticipantRoleDomain participantRoleDomain = createParticipantRoleDomain(participantDomain, panelDomain,
-                    PanelPositionDomain.PRESENTER);
+            if (validateParticipant(participantDomain)) {
 
-            entityManager.persist(participantRoleDomain);
-            participantDomain.setParticipantRoleDomain(participantRoleDomain);
-            panelDomain.addParticipant(participantDomain);
-            panelDomain.setParticipantRoleDomain(participantRoleDomain);
+                entityManager.persist(participantDomain);
+                ParticipantRoleDomain participantRoleDomain = createParticipantRoleDomain(participantDomain, panelDomain,
+                        PanelPositionDomain.PRESENTER);
 
-            paperDomain.addParticipant(participantDomain);
-            paperDomain.setPanelId(panelDomain.getPanelId());
+                entityManager.persist(participantRoleDomain);
+                participantDomain.setParticipantRoleDomain(participantRoleDomain);
+                panelDomain.addParticipant(participantDomain);
+                panelDomain.setParticipantRoleDomain(participantRoleDomain);
+
+                paperDomain.addParticipant(participantDomain);
+                paperDomain.setPanelId(panelDomain.getPanelId());
+            }
 
             entityManager.persist(paperDomain);
         }
     }
 
-    private ParticipantDomain findMatchingPanelist(List panelists, ParticipantDomain target) {
-        return (ParticipantDomain) panelists.stream().filter(target::equals).findFirst().orElse(null);
+    private void persistSupporting(PanelDomain panelDomain, ParticipantDomain participant, PanelPositionDomain position) {
+        if(validateParticipant(participant)){
+            ParticipantDomain matching = findMatchingPanelist(panelDomain.getParticipants(), participant);
+            if (matching != null) {
+                if (position == PanelPositionDomain.CHAIR) {
+                    matching.getParticipantRoleDomain().setChair(true);
+                }
+                if (position == PanelPositionDomain.COMMENTATOR) {
+                    matching.getParticipantRoleDomain().setCommentator(true);
+                }
+                if (position == PanelPositionDomain.CONTACT) {
+                    matching.getParticipantRoleDomain().setContact(true);
+                }
+            } else {
+                entityManager.persist(participant);
+                ParticipantRoleDomain role = createParticipantRoleDomain(participant, panelDomain, position);
+                entityManager.persist(role);
+                participant.setParticipantRoleDomain(role);
+                panelDomain.addParticipant(participant);
+            }
+        }
+    }
+
+//    private void persistChair(PanelDomain panelDomain, ParticipantDomain chair) {
+//        if(validateParticipant(chair)){
+//            ParticipantDomain matching = findMatchingPanelist(panelDomain.getParticipants(), chair);
+//            if (matching != null) {
+//                matching.getParticipantRoleDomain().setChair(true);
+//            } else {
+//                entityManager.persist(chair);
+//                ParticipantRoleDomain role = createParticipantRoleDomain(chair, panelDomain, PanelPositionDomain.CHAIR);
+//                entityManager.persist(role);
+//                chair.setParticipantRoleDomain(role);
+//                panelDomain.addParticipant(chair);
+//            }
+//        }
+//    }
+//
+//    private void persistCommentator(PanelDomain panelDomain, ParticipantDomain commentator) {
+//        if(validateParticipant(commentator)){
+//            ParticipantDomain matching = findMatchingPanelist(panelDomain.getParticipants(), commentator);
+//            if (matching != null) {
+//                matching.getParticipantRoleDomain().setCommentator(true);
+//            } else {
+//                entityManager.persist(commentator);
+//                ParticipantRoleDomain role = createParticipantRoleDomain(commentator, panelDomain, PanelPositionDomain.COMMENTATOR);
+//                entityManager.persist(role);
+//                commentator.setParticipantRoleDomain(role);
+//                panelDomain.addParticipant(commentator);
+//            }
+//        }
+//    }
+
+    private boolean validateParticipant(ParticipantDomain participantDomain) {
+        return participantDomain != null && !participantDomain.getFirstName().isEmpty() && !participantDomain.getLastName().isEmpty();
+    }
+
+    private ParticipantDomain findMatchingPanelist(List<ParticipantDomain> panelists, ParticipantDomain target) {
+        return panelists.stream().filter(target::equals).findFirst().orElse(null);
     }
 
     private ParticipantRoleDomain createParticipantRoleDomain(ParticipantDomain participantDomain, PanelDomain panelDomain,
