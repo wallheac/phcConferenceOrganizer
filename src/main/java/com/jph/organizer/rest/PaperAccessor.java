@@ -18,7 +18,10 @@ public class PaperAccessor {
 
     }
 
-    public List<PaperDomain> getPapers() {
+    public List<PaperDomain> getPapers(Boolean unassigned) {
+        if(unassigned) {
+            return paperRepository.findPaperDomainsByPanelIdIsNull();
+        }
         return paperRepository.findAll();
     }
 }

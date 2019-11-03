@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PaperRepository extends JpaRepository<PaperDomain, Integer> {
     List<PaperDomain> findAllByPanelIdEquals(Integer panelId);
+    List<PaperDomain> findPaperDomainsByPanelIdIsNull();
 }

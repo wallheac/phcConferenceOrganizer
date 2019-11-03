@@ -83,7 +83,7 @@ public class OrganizerPanelTransformer {
     private Paper mapPaper(PaperDomain paperDomain) {
         if (paperDomain != null) {
             return new Paper(paperDomain.getPaperId(), paperDomain.getTitle(), paperDomain.getAbstractUrl(),
-                    paperDomain.getPanelId(), paperDomain.getAccepted());
+                    paperDomain.getPanelId(), paperDomain.getAccepted(), null);
         }
         return null;
     }

@@ -1,13 +1,11 @@
 package com.jph.organizer.rest;
 
 import com.jph.organizer.domain.PanelDomain;
+import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.rest.respresentation.Panel;
+import com.jph.organizer.rest.respresentation.Paper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,10 +16,15 @@ public class OrganizerController {
     @Autowired
     private PanelAccessor panelAccessor;
     @Autowired
+    private PaperAccessor paperAccessor;
+    @Autowired
     private OrganizerPanelTransformer organizerPanelTransformer;
+    @Autowired
+    private OrganizerPaperTransformer organizerPaperTransformer;
 
     @GetMapping("/panels")
-    public List<Panel> getPanels() {
+    public List<Panel> getPanels(
+    ) {
         List<PanelDomain> panelDomains = panelAccessor.getPanels();
         List<Panel> panels = organizerPanelTransformer.fromPanelDomains(panelDomains);
         return panels;
@@ -33,5 +36,14 @@ public class OrganizerController {
         PanelDomain panelDomain = panelAccessor.getPanelById(Integer.valueOf(id));
                 Panel panel = organizerPanelTransformer.fromPanelDomain(panelDomain);
                 return panel;
+    }
+
+    @GetMapping("/papers")
+    public List<Paper> getPapers(
+            @RequestParam(required=false, defaultValue="false") String unassigned ) {
+        Boolean flag = unassigned.equals("true");
+        List<PaperDomain> paperDomains = paperAccessor.getPapers(flag);
+        List<Paper> papers =  organizerPaperTransformer.fromPaperDomains(paperDomains);
+        return papers;
     }
 }
