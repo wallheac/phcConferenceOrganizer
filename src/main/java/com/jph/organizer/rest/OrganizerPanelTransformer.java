@@ -1,10 +1,11 @@
 package com.jph.organizer.rest;
 
 import com.jph.organizer.domain.*;
-import com.jph.organizer.rest.respresentation.Panel;
-import com.jph.organizer.rest.respresentation.Paper;
-import com.jph.organizer.rest.respresentation.Participant;
-import com.jph.organizer.rest.respresentation.RoleAccessor;
+import com.jph.organizer.rest.representation.ConstructedPanel;
+import com.jph.organizer.rest.representation.Panel;
+import com.jph.organizer.rest.representation.Paper;
+import com.jph.organizer.rest.representation.Participant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,14 @@ public class OrganizerPanelTransformer {
     private PaperAccessor paperAccessor;
     @Autowired
     private RoleAccessor roleAccessor;
+    @Autowired
+    private PanelAccessor panelAccessor;
+    @Autowired
+    private OrganizerParticipantTransformer organizerParticipantTransformer;
+    @Autowired
+    private OrganizerPaperTransformer organizerPaperTransformer;
+    @Autowired
+    private OrganizerPanelMutator organizerPanelMutator;
 
     public List<Panel> fromPanelDomains(List<PanelDomain> panelDomains) {
         return panelDomains.stream().map(this::fromPanelDomain).collect(Collectors.toList());
@@ -96,4 +105,28 @@ public class OrganizerPanelTransformer {
                 .findFirst()
                 .orElse(null);
     }
+    
+    public List<PanelDomain> toPanelDomains(List<ConstructedPanel> constructedPanels) {
+    	return constructedPanels.stream()
+                .map(this::toPanelDomain)
+                .collect(Collectors.toList());
+    }
+
+	public PanelDomain toPanelDomain(ConstructedPanel constructedPanel) {
+		PanelDomain panelDomain = new PanelDomain();
+		panelDomain.setPanelName(constructedPanel.getTitle());
+		panelDomain.setType(TypeDomain.CONSTRUCTED.toString());
+		//TODO this should eventually be set in the UI
+		panelDomain.setAccepted(true);
+		List<Participant> participants = constructedPanel.getPapers().stream()
+				.map(paper -> paper.getParticipant())
+				.collect(Collectors.toList());
+		
+		List<ParticipantDomain> participantDomains = organizerParticipantTransformer.toParticipantDomains(participants);
+		List<PaperDomain> paperDomains = organizerPaperTransformer.toPaperDomains(constructedPanel.getPapers());
+		
+		organizerPanelMutator.persistConstructedPanel(panelDomain, participantDomains, paperDomains);
+		
+		return null;
+	}
 }

@@ -1,4 +1,4 @@
-package com.jph.organizer.rest.respresentation;
+package com.jph.organizer.rest;
 
 import com.jph.organizer.domain.ParticipantRoleDomain;
 import com.jph.organizer.repository.ParticipantRoleRepository;

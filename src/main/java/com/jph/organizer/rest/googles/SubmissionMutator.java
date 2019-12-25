@@ -80,36 +80,6 @@ public class SubmissionMutator {
         }
     }
 
-//    private void persistChair(PanelDomain panelDomain, ParticipantDomain chair) {
-//        if(validateParticipant(chair)){
-//            ParticipantDomain matching = findMatchingPanelist(panelDomain.getParticipants(), chair);
-//            if (matching != null) {
-//                matching.getParticipantRoleDomain().setChair(true);
-//            } else {
-//                entityManager.persist(chair);
-//                ParticipantRoleDomain role = createParticipantRoleDomain(chair, panelDomain, PanelPositionDomain.CHAIR);
-//                entityManager.persist(role);
-//                chair.setParticipantRoleDomain(role);
-//                panelDomain.addParticipant(chair);
-//            }
-//        }
-//    }
-//
-//    private void persistCommentator(PanelDomain panelDomain, ParticipantDomain commentator) {
-//        if(validateParticipant(commentator)){
-//            ParticipantDomain matching = findMatchingPanelist(panelDomain.getParticipants(), commentator);
-//            if (matching != null) {
-//                matching.getParticipantRoleDomain().setCommentator(true);
-//            } else {
-//                entityManager.persist(commentator);
-//                ParticipantRoleDomain role = createParticipantRoleDomain(commentator, panelDomain, PanelPositionDomain.COMMENTATOR);
-//                entityManager.persist(role);
-//                commentator.setParticipantRoleDomain(role);
-//                panelDomain.addParticipant(commentator);
-//            }
-//        }
-//    }
-
     private boolean validateParticipant(ParticipantDomain participantDomain) {
         return participantDomain != null && !participantDomain.getFirstName().isEmpty() && !participantDomain.getLastName().isEmpty();
     }

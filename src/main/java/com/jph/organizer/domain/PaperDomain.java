@@ -3,6 +3,7 @@ package com.jph.organizer.domain;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(name="Paper")
 @Table(name="paper")
@@ -29,6 +30,14 @@ public class PaperDomain {
     }
 
     public PaperDomain(String title, String abstractUrl, Integer panelId, Boolean accepted) {
+        this.title = title;
+        this.abstractUrl = abstractUrl;
+        this.panelId = panelId;
+        this.accepted = accepted;
+    }
+
+    public PaperDomain(Integer paperId, String title, String abstractUrl, Integer panelId, Boolean accepted) {
+        this.paperId = paperId;
         this.title = title;
         this.abstractUrl = abstractUrl;
         this.panelId = panelId;
@@ -85,5 +94,23 @@ public class PaperDomain {
 
     public void setAccepted(Boolean accepted) {
         this.accepted = accepted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PaperDomain)) return false;
+        PaperDomain that = (PaperDomain) o;
+        return Objects.equals(participantDomains, that.participantDomains) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(abstractUrl, that.abstractUrl) &&
+                Objects.equals(panelId, that.panelId) &&
+                Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(participantDomains, title, abstractUrl, panelId, accepted);
     }
 }

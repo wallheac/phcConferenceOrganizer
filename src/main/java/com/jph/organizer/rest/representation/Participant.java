@@ -1,6 +1,7 @@
-package com.jph.organizer.rest.respresentation;
+package com.jph.organizer.rest.representation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -17,7 +18,16 @@ public class Participant {
     private Paper paper;
 
     @JsonCreator
-    public Participant(Integer participantId, String firstName, String lastName, String status, String institution, List<String> roles, String email, String notes, Paper paper) {
+    public Participant(
+            @JsonProperty("participantId") Integer participantId,
+            @JsonProperty("firstName") String firstName,
+            @JsonProperty("lastName") String lastName,
+            @JsonProperty("status") String status,
+            @JsonProperty("institution") String institution,
+            @JsonProperty("roles") List<String> roles,
+            @JsonProperty("email") String email,
+            @JsonProperty("notes") String notes,
+            @JsonProperty("paper") Paper paper) {
         this.participantId = participantId;
         this.paper = paper;
         this.firstName = firstName;

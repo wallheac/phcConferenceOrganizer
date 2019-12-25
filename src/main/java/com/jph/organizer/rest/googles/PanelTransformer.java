@@ -4,7 +4,8 @@ import com.google.api.services.drive.model.File;
 import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.domain.ParticipantDomain;
-import com.jph.organizer.rest.respresentation.Participant;
+import com.jph.organizer.rest.representation.Participant;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 

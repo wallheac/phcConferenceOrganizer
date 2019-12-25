@@ -26,6 +26,10 @@ public class ParticipantRoleIdDomain implements Serializable {
         return participantId;
     }
 
+    public void setPanelId(Integer panelId) {
+        this.panelId = panelId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

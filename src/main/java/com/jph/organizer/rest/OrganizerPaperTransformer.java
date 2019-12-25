@@ -2,8 +2,9 @@ package com.jph.organizer.rest;
 
 import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.domain.ParticipantDomain;
-import com.jph.organizer.rest.respresentation.Paper;
-import com.jph.organizer.rest.respresentation.Participant;
+import com.jph.organizer.rest.representation.Paper;
+import com.jph.organizer.rest.representation.Participant;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class OrganizerPaperTransformer {
     }
 // TODO accommodate a list of authors (this will probably require rethinking your persistence logic
     private Paper fromPaperDomain(PaperDomain paperDomain) {
-        Participant participant = null;
+    	Participant participant = null;
         if(paperDomain.getParticipantDomains().size() > 0) {
             participant = fromParticipantDomain(paperDomain.getParticipantDomains().get(0));
         }
@@ -33,6 +34,9 @@ public class OrganizerPaperTransformer {
                 participantDomain.getLastName(), participantDomain.getStatus(), participantDomain.getInstitution(),
                 null, participantDomain.getEmail(), participantDomain.getNotes(), null);
     }
+	public List<PaperDomain> toPaperDomains(List<Paper> papers) {
+		return papers.stream().map(paper -> new PaperDomain(paper.getPaperId(), paper.getTitle(), paper.getAbstractUrl(), paper.getPanelId(), paper.getAccepted())).collect(Collectors.toList());
+	}
 
 
 }

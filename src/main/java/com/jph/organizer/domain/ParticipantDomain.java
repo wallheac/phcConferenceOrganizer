@@ -55,6 +55,17 @@ public class ParticipantDomain {
         this.notes = notes;
     }
 
+    public ParticipantDomain(Integer participantId, String firstName, String lastName, String status, String institution, String email,
+                             String notes) {
+        this.participantId = participantId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.status = status;
+        this.institution = institution;
+        this.email = email;
+        this.notes = notes;
+    }
+
     public ParticipantRoleDomain getParticipantRoleDomain() {
         return participantRoleDomain;
     }
@@ -151,7 +162,9 @@ public class ParticipantDomain {
 
         return(participantDomain.firstName.equals(this.firstName) &&
                 participantDomain.lastName.equals(this.lastName) &&
-                participantDomain.email.equals(this.email));
+                participantDomain.email.equals(this.email)) &&
+                participantDomain.status.equals(this.status) &&
+                participantDomain.institution.equals(this.institution);
     }
 }
 

@@ -1,4 +1,4 @@
-package com.jph.organizer.rest.respresentation;
+package com.jph.organizer.rest.representation;
 
 public class Paper {
 

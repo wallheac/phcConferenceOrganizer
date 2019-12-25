@@ -2,8 +2,10 @@ package com.jph.organizer.rest;
 
 import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.domain.PaperDomain;
-import com.jph.organizer.rest.respresentation.Panel;
-import com.jph.organizer.rest.respresentation.Paper;
+import com.jph.organizer.rest.representation.ConstructedPanel;
+import com.jph.organizer.rest.representation.Panel;
+import com.jph.organizer.rest.representation.Paper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +13,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/organizer")
-public class OrganizerController {
+public class
+OrganizerController {
 
     @Autowired
     private PanelAccessor panelAccessor;
@@ -45,5 +48,10 @@ public class OrganizerController {
         List<PaperDomain> paperDomains = paperAccessor.getPapers(flag);
         List<Paper> papers =  organizerPaperTransformer.fromPaperDomains(paperDomains);
         return papers;
+    }
+    
+    @PostMapping("/constructedpanel")
+    public void postPanels(@RequestBody List<ConstructedPanel> constructedPanels) {
+    	List<PanelDomain> panelDomains = organizerPanelTransformer.toPanelDomains(constructedPanels);
     }
 }

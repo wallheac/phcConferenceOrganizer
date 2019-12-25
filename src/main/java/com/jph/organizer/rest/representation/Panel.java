@@ -1,4 +1,4 @@
-package com.jph.organizer.rest.respresentation;
+package com.jph.organizer.rest.representation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
@@ -43,7 +43,7 @@ public class Panel {
     }
 
     public int getPanelId() {
-        return panelId;
+        return this.panelId;
     }
 
     public String getPanelName() {
