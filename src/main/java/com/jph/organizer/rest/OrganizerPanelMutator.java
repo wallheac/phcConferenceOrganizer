@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 
 import com.jph.organizer.domain.*;
 import com.jph.organizer.repository.PaperRepository;
@@ -20,56 +21,56 @@ public class OrganizerPanelMutator {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@Autowired
-	private ParticipantRepository participantRepository;
-	@Autowired
-	private PaperRepository paperRepository;
+	public PanelDomain persistConstructedPanel(PanelDomain panelDomain, List<ParticipantDomain> participantDomains,
+			List<PaperDomain> paperDomains) throws PersistenceException {
 
-	public void persistConstructedPanel(PanelDomain panelDomain, List<ParticipantDomain> participantDomains,
-			List<PaperDomain> paperDomains) {
-		
-		entityManager.persist(panelDomain);
+		try {
+			entityManager.persist(panelDomain);
 
-		List<ParticipantDomain> participantDomainsFromDb = participantDomains.stream()
-				.map(participantDomain -> entityManager.find(ParticipantDomain.class, participantDomain.getParticipantId()))
-				.collect(Collectors.toList());
+			List<ParticipantDomain> participantDomainsFromDb = participantDomains.stream()
+					.map(participantDomain -> entityManager.find(ParticipantDomain.class, participantDomain.getParticipantId()))
+					.collect(Collectors.toList());
 
-		for (int i = 0; i < participantDomainsFromDb.size(); i++) {
-			ParticipantDomain fromDb = participantDomainsFromDb.get(i);
-			ParticipantRoleDomain participantRoleDomain = new ParticipantRoleDomain(
-					new ParticipantRoleIdDomain(panelDomain.getPanelId(), fromDb.getParticipantId()),
-					true, false, false, false);
+			for (int i = 0; i < participantDomainsFromDb.size(); i++) {
+				ParticipantDomain fromDb = participantDomainsFromDb.get(i);
+				ParticipantRoleDomain participantRoleDomain = new ParticipantRoleDomain(
+						new ParticipantRoleIdDomain(panelDomain.getPanelId(), fromDb.getParticipantId()),
+						true, false, false, false);
 
-			entityManager.persist(participantRoleDomain);
+				entityManager.persist(participantRoleDomain);
 
-			//check for changes to participant fields
-			if(!fromDb.equals(participantDomains.get(i))){
-				incorporateChangedParticipantFields(participantDomains.get(i), fromDb);
+				//check for changes to participant fields
+				if (!fromDb.equals(participantDomains.get(i))) {
+					incorporateChangedParticipantFields(participantDomains.get(i), fromDb);
+				}
+				//required changes to participant
+				fromDb.getPanels().add(panelDomain);
+				fromDb.setParticipantRoleDomain(participantRoleDomain);
+
+				//get paper from DB
+				int finalI = i;
+				PaperDomain paperFromDb = fromDb.getPaperDomains().stream()
+						.filter(paperDomain -> paperDomain.getPaperId().equals(paperDomains.get(finalI).getPaperId())).findFirst().get();
+
+				//check for changes to paper and incorporate
+				if (!paperFromDb.equals(paperDomains.get(i))) {
+					incorporateChangedPaperFields(paperDomains.get(i), paperFromDb);
+				}
+
+				//required changes to paper
+				paperFromDb.setPanelId(panelDomain.getPanelId());
+				//TODO beware that later iterations may change this
+				paperFromDb.setAccepted(true);
+
+				entityManager.merge(fromDb);
+				panelDomain.getParticipants().add(fromDb);
 			}
-			//required changes to participant
-			fromDb.getPanels().add(panelDomain);
-			fromDb.setParticipantRoleDomain(participantRoleDomain);
-
-			//get paper from DB
-			int finalI = i;
-			PaperDomain paperFromDb = fromDb.getPaperDomains().stream()
-					.filter(paperDomain -> paperDomain.getPaperId().equals(paperDomains.get(finalI).getPaperId())).findFirst().get();
-
-			//check for changes to paper and incorporate
-			if(!paperFromDb.equals(paperDomains.get(i))) {
-				incorporateChangedPaperFields(paperDomains.get(i), paperFromDb);
-			}
-
-			//required changes to paper
-			paperFromDb.setPanelId(panelDomain.getPanelId());
-			//TODO beware that later iterations may change this
-			paperFromDb.setAccepted(true);
-
-			entityManager.merge(fromDb);
-			panelDomain.getParticipants().add(fromDb);
+		} catch(Exception e) {
+			throw new PersistenceException("Problem persisting constructed panel " + panelDomain.getPanelName(), e);
 		}
 
 		entityManager.close();
+		return panelDomain;
 	}
 
 	private void incorporateChangedPaperFields(PaperDomain paperDomain, PaperDomain paperFromDb) {

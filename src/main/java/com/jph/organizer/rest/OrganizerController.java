@@ -9,6 +9,7 @@ import com.jph.organizer.rest.representation.Paper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @RestController
@@ -51,7 +52,13 @@ OrganizerController {
     }
     
     @PostMapping("/constructedpanel")
-    public void postPanels(@RequestBody List<ConstructedPanel> constructedPanels) {
-    	List<PanelDomain> panelDomains = organizerPanelTransformer.toPanelDomains(constructedPanels);
+    public List<Panel> postPanels(@RequestBody List<ConstructedPanel> constructedPanels) {
+        List <PanelDomain> panelDomains;
+        try {
+            panelDomains = organizerPanelTransformer.toPanelDomains(constructedPanels);
+        } catch (PersistenceException e){
+            throw new PersistenceException(e.getMessage());
+        }
+        return organizerPanelTransformer.fromPanelDomains(panelDomains);
     }
 }

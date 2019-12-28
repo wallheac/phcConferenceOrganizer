@@ -9,6 +9,8 @@ import com.jph.organizer.rest.representation.Participant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PersistenceException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -106,13 +108,13 @@ public class OrganizerPanelTransformer {
                 .orElse(null);
     }
     
-    public List<PanelDomain> toPanelDomains(List<ConstructedPanel> constructedPanels) {
+    public List<PanelDomain> toPanelDomains(List<ConstructedPanel> constructedPanels) throws PersistenceException {
     	return constructedPanels.stream()
                 .map(this::toPanelDomain)
                 .collect(Collectors.toList());
     }
 
-	public PanelDomain toPanelDomain(ConstructedPanel constructedPanel) {
+	public PanelDomain toPanelDomain(ConstructedPanel constructedPanel) throws PersistenceException {
 		PanelDomain panelDomain = new PanelDomain();
 		panelDomain.setPanelName(constructedPanel.getTitle());
 		panelDomain.setType(TypeDomain.CONSTRUCTED.toString());
@@ -124,9 +126,7 @@ public class OrganizerPanelTransformer {
 		
 		List<ParticipantDomain> participantDomains = organizerParticipantTransformer.toParticipantDomains(participants);
 		List<PaperDomain> paperDomains = organizerPaperTransformer.toPaperDomains(constructedPanel.getPapers());
-		
-		organizerPanelMutator.persistConstructedPanel(panelDomain, participantDomains, paperDomains);
-		
-		return null;
+
+		return organizerPanelMutator.persistConstructedPanel(panelDomain, participantDomains, paperDomains);
 	}
 }
