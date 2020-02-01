@@ -1,6 +1,7 @@
 package com.jph.organizer.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity(name="ParticipantRole")
 @Table(name="participant_role")
@@ -67,5 +68,22 @@ public class ParticipantRoleDomain {
 
     public void setContact(Boolean contact) {
         this.contact = contact;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ParticipantRoleDomain)) return false;
+        ParticipantRoleDomain that = (ParticipantRoleDomain) o;
+        return Objects.equals(presenter, that.presenter) &&
+                Objects.equals(commentator, that.commentator) &&
+                Objects.equals(chair, that.chair) &&
+                Objects.equals(contact, that.contact);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(participantRoleIdDomain, presenter, commentator, chair, contact);
     }
 }

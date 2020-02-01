@@ -129,4 +129,16 @@ public class OrganizerPanelTransformer {
 
 		return organizerPanelMutator.persistConstructedPanel(panelDomain, participantDomains, paperDomains);
 	}
+
+	public PanelDomain toPanelDomain(Panel panel) throws PersistenceException {
+        PanelDomain panelDomain = new PanelDomain();
+        panelDomain.setPanelId(panel.getPanelId());
+        panelDomain.setPanelName(panel.getPanelName());
+        panelDomain.setType(panel.getType());
+        panelDomain.setAccepted(panel.getAccepted());
+
+        List<ParticipantDomain> participantDomains = organizerParticipantTransformer.toParticipantDomains(panel.getParticipants());
+
+        return organizerPanelMutator.persistPanel(panelDomain, participantDomains);
+    }
 }

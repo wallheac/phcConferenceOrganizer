@@ -61,4 +61,15 @@ OrganizerController {
         }
         return organizerPanelTransformer.fromPanelDomains(panelDomains);
     }
+
+    @PostMapping("/panel")
+    public Panel updatePanel(@RequestBody Panel panel) {
+        PanelDomain panelDomain = null;
+        try {
+            panelDomain = organizerPanelTransformer.toPanelDomain(panel);
+        } catch (PersistenceException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+        return organizerPanelTransformer.fromPanelDomain(panelDomain);
+    }
 }
