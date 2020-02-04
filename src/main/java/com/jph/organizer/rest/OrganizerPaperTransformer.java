@@ -24,7 +24,7 @@ public class OrganizerPaperTransformer {
 	}
 
 // TODO accommodate a list of authors (this will probably require rethinking your persistence logic
-	private Paper fromPaperDomain(PaperDomain paperDomain) {
+public Paper fromPaperDomain(PaperDomain paperDomain) {
 		Participant participant = null;
 		if (paperDomain.getParticipantDomains().size() > 0) {
 			participant = organizerParticipantTransformer.fromParticipantDomain(paperDomain.getParticipantDomains().get(0));

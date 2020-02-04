@@ -25,6 +25,8 @@ OrganizerController {
     private OrganizerPanelTransformer organizerPanelTransformer;
     @Autowired
     private OrganizerPaperTransformer organizerPaperTransformer;
+    @Autowired
+    private OrganizerPaperMutator organizerPaperMutator;
 
     @GetMapping("/panels")
     public List<Panel> getPanels(
@@ -49,6 +51,20 @@ OrganizerController {
         List<PaperDomain> paperDomains = paperAccessor.getPapers(flag);
         List<Paper> papers =  organizerPaperTransformer.fromPaperDomains(paperDomains);
         return papers;
+    }
+
+    @PostMapping("/paper/{id}")
+    public Paper updatePaper(@PathVariable("id") String id,
+            @RequestBody Paper paper
+    ) {
+        PaperDomain paperDomain = null;
+        try {
+            paperDomain = organizerPaperTransformer.toPaperDomain(paper);
+            organizerPaperMutator.persistPaper(paperDomain, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return organizerPaperTransformer.fromPaperDomain(paperDomain);
     }
     
     @PostMapping("/constructedpanel")
