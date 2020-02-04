@@ -19,7 +19,7 @@ public class OrganizerPaperMutator {
         PaperDomain paperDomainFromDb;
 
         try {
-            paperDomainFromDb = entityManager.find(PaperDomain.class, id);
+            paperDomainFromDb = entityManager.find(PaperDomain.class, Integer.parseInt(id));
             incorporateChangedPaperFields(paperDomain, paperDomainFromDb);
             entityManager.merge(paperDomainFromDb);
         } catch(Exception e) {
