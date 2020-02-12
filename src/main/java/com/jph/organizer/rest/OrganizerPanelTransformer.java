@@ -136,6 +136,7 @@ public class OrganizerPanelTransformer {
         panelDomain.setPanelName(panel.getPanelName());
         panelDomain.setType(panel.getType());
         panelDomain.setAccepted(panel.getAccepted());
+        panelDomain.setNotes(panel.getNotes());
 
         List<ParticipantDomain> participantDomains = organizerParticipantTransformer.toParticipantDomains(panel.getParticipants());
 

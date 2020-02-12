@@ -57,6 +57,7 @@ public class OrganizerPanelMutator {
     private void incorporatePanelChanges(PanelDomain panelDomain, PanelDomain panelDomainFromDb) {
 	    panelDomainFromDb.setPanelName(panelDomain.getPanelName());
 	    panelDomainFromDb.setAccepted(panelDomain.getAccepted());
+	    panelDomainFromDb.setNotes(panelDomain.getNotes());
     }
 
     private void incorporateChangedRoleDomains(ParticipantDomain fromUi, ParticipantDomain fromDb) {
