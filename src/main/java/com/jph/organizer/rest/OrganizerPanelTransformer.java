@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.PersistenceException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,6 +138,11 @@ public class OrganizerPanelTransformer {
         panelDomain.setType(panel.getType());
         panelDomain.setAccepted(panel.getAccepted());
         panelDomain.setNotes(panel.getNotes());
+        panelDomain.setAvRequested(panel.getAvRequested());
+        panelDomain.setRequestor(panel.getRequestor());
+        if(panel.getAvRequestDate() == null) {
+            panelDomain.setAvRequestDate(new Date());
+        }
 
         List<ParticipantDomain> participantDomains = organizerParticipantTransformer.toParticipantDomains(panel.getParticipants());
 
