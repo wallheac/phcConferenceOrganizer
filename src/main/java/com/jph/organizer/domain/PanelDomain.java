@@ -85,10 +85,6 @@ public class PanelDomain {
         this.avRequestDate = avRequestDate;
     }
 
-//    public void addParticipantRoleDomain(ParticipantRoleDomain participantRoleDomain) {
-//        participantRoleDomains.add(participantRoleDomain);
-//    }
-
     public void addParticipant(ParticipantDomain participantDomain) {
         participants.add(participantDomain);
         participantDomain.getPanels().add(this);

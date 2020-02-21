@@ -1,5 +1,6 @@
 package com.jph.organizer.rest;
 
+import com.jph.organizer.domain.DateDomain;
 import com.jph.organizer.domain.PanelDomain;
 import com.jph.organizer.domain.PaperDomain;
 import com.jph.organizer.rest.representation.ConstructedPanel;
@@ -22,9 +23,13 @@ OrganizerController {
     @Autowired
     private PaperAccessor paperAccessor;
     @Autowired
+    private DateAccessor dateAccessor;
+    @Autowired
     private OrganizerPanelTransformer organizerPanelTransformer;
     @Autowired
     private OrganizerPaperTransformer organizerPaperTransformer;
+    @Autowired
+    private DateTransformer dateTransformer;
     @Autowired
     private OrganizerPaperMutator organizerPaperMutator;
 
@@ -51,6 +56,13 @@ OrganizerController {
         List<PaperDomain> paperDomains = paperAccessor.getPapers(flag);
         List<Paper> papers =  organizerPaperTransformer.fromPaperDomains(paperDomains);
         return papers;
+    }
+
+    @GetMapping("/dates")
+    public List <String> getDates() {
+        List <DateDomain> dates = dateAccessor.getDates();
+        return dateTransformer.fromDateDomains(dates);
+//        return Arrays.asList("2020-06-03 15:15:00");
     }
 
     @PostMapping("/paper/{id}")

@@ -23,8 +23,4 @@ public class PanelAccessor {
     public List<PanelDomain> getPanels() {
         return panelRepository.findAll();
     }
-
-//	public PanelDomain postPanel(PanelDomain panelDomain) {
-//		return panelRepository.save(panelDomain);
-//	}
 }
