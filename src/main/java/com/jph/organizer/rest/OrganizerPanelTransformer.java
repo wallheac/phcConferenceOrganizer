@@ -143,6 +143,9 @@ public class OrganizerPanelTransformer {
         if(panel.getAvRequestDate() == null) {
             panelDomain.setAvRequestDate(new Date());
         }
+        if(panel.getDateTime() != null) {
+            panelDomain.setDateTime(panel.getDateTime());
+        }
 
         List<ParticipantDomain> participantDomains = organizerParticipantTransformer.toParticipantDomains(panel.getParticipants());
 

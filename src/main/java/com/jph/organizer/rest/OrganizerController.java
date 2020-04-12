@@ -7,6 +7,7 @@ import com.jph.organizer.rest.representation.ConstructedPanel;
 import com.jph.organizer.rest.representation.Panel;
 import com.jph.organizer.rest.representation.Paper;
 
+import com.jph.organizer.rest.representation.TimeSlot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,29 +46,28 @@ OrganizerController {
     public Panel getPanel(
             @PathVariable("id") String id) {
         PanelDomain panelDomain = panelAccessor.getPanelById(Integer.valueOf(id));
-                Panel panel = organizerPanelTransformer.fromPanelDomain(panelDomain);
-                return panel;
+        Panel panel = organizerPanelTransformer.fromPanelDomain(panelDomain);
+        return panel;
     }
 
     @GetMapping("/papers")
     public List<Paper> getPapers(
-            @RequestParam(required=false, defaultValue="false") String unassigned ) {
+            @RequestParam(required = false, defaultValue = "false") String unassigned) {
         Boolean flag = unassigned.equals("true");
         List<PaperDomain> paperDomains = paperAccessor.getPapers(flag);
-        List<Paper> papers =  organizerPaperTransformer.fromPaperDomains(paperDomains);
+        List<Paper> papers = organizerPaperTransformer.fromPaperDomains(paperDomains);
         return papers;
     }
 
     @GetMapping("/dates")
-    public List <String> getDates() {
-        List <DateDomain> dates = dateAccessor.getDates();
+    public List<TimeSlot> getDates() {
+        List<DateDomain> dates = dateAccessor.getDates();
         return dateTransformer.fromDateDomains(dates);
-//        return Arrays.asList("2020-06-03 15:15:00");
     }
 
     @PostMapping("/paper/{id}")
     public Paper updatePaper(@PathVariable("id") String id,
-            @RequestBody Paper paper
+                             @RequestBody Paper paper
     ) {
         PaperDomain paperDomain = null;
         try {
@@ -78,13 +78,13 @@ OrganizerController {
         }
         return organizerPaperTransformer.fromPaperDomain(paperDomain);
     }
-    
+
     @PostMapping("/constructedpanel")
     public List<Panel> postPanels(@RequestBody List<ConstructedPanel> constructedPanels) {
-        List <PanelDomain> panelDomains;
+        List<PanelDomain> panelDomains;
         try {
             panelDomains = organizerPanelTransformer.toPanelDomains(constructedPanels);
-        } catch (PersistenceException e){
+        } catch (PersistenceException e) {
             throw new PersistenceException(e.getMessage());
         }
         return organizerPanelTransformer.fromPanelDomains(panelDomains);

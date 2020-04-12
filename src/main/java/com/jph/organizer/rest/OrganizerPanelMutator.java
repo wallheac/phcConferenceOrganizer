@@ -61,6 +61,7 @@ public class OrganizerPanelMutator {
 	    panelDomainFromDb.setAvRequestDate(panelDomain.getAvRequestDate());
 	    panelDomainFromDb.setAvRequested(panelDomain.getAvRequested());
 	    panelDomainFromDb.setRequestor(panelDomain.getRequestor());
+	    panelDomainFromDb.setDateTime(panelDomain.getDateTime());
     }
 
     private void incorporateChangedRoleDomains(ParticipantDomain fromUi, ParticipantDomain fromDb) {

@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
+import java.time.Instant;
 
 @Entity(name="Date")
 @Table(name="dates")
@@ -14,15 +14,15 @@ public class DateDomain {
     private int dayId;
 
     @Column(name="day_time")
-    private Date date;
+    private Instant instant;
 
 
     public DateDomain() {
     }
 
-    public DateDomain(int dayId, Date date) {
+    public DateDomain(int dayId, Instant instant) {
         this.dayId = dayId;
-        this.date = date;
+        this.instant = instant;
     }
 
     public int getDayId() {
@@ -33,11 +33,11 @@ public class DateDomain {
         this.dayId = dayId;
     }
 
-    public Date getDate() {
-        return date;
+    public Instant getInstant() {
+        return instant;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setInstant(Instant instant) {
+        this.instant = instant;
     }
 }
